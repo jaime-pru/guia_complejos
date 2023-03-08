@@ -69,6 +69,7 @@
 <li><a class="" href="index.html"><span class="header-section-number">1</span> Presentación</a></li>
 <li><a class="active" href="sec2.html"><span class="header-section-number">2</span> Identificación de las cadenas productivas</a></li>
 <li><a class="" href="sec3.html"><span class="header-section-number">3</span> Identificación de los complejos con el indicador de asociación espacial local de Moran</a></li>
+<li><a class="" href="references.html">References</a></li>
 </ul>
 
         <div class="book-extra">
@@ -80,13 +81,13 @@
 <h1>
 <span class="header-section-number">Sección 2</span> Identificación de las cadenas productivas<a class="anchor" aria-label="anchor" href="#sec2"><i class="fas fa-link"></i></a>
 </h1>
-<p>El objetivo es construir o identificar conjuntos de actividades económicas que, dada su similitud en sus patrones de compras y ventas intersectoriales, puedan ser considerados como cadenas productivas. Se recurre al procedimiento de Feser y Bergman <span class="citation">(<a href="sec3.html#ref-Feser2000" role="doc-biblioref">2000</a>)</span>. La información utilizada corresponde la matriz de insumo producto de México de 2013 publicada por INEGI <span class="citation">(<a href="sec3.html#ref-INEGI2018cn" role="doc-biblioref">2018a</a>)</span>.</p>
+<p>El objetivo es construir o identificar conjuntos de actividades económicas que, dada su similitud en sus patrones de compras y ventas intersectoriales, puedan ser considerados como cadenas productivas. Se recurre al procedimiento de Feser y Bergman <span class="citation">(<a href="references.html#ref-Feser2000" role="doc-biblioref">2000</a>)</span>. La información utilizada corresponde la matriz de insumo producto de México de 2013 publicada por INEGI <span class="citation">(<a href="references.html#ref-INEGI2018cn" role="doc-biblioref">2018a</a>)</span>.</p>
 <div id="breve-exposición-del-método" class="section level2" number="2.1">
 <h2>
 <span class="header-section-number">2.1</span> Breve exposición del método<a class="anchor" aria-label="anchor" href="#breve-exposici%C3%B3n-del-m%C3%A9todo"><i class="fas fa-link"></i></a>
 </h2>
-<p>La matriz de insumo producto (MIP) es un instrumento que permite conocer las relaciones intersectoriales entre las actividades económicas que se desarrollan en una economía nacional a través del registro de las compras y ventas que se suceden entre ellas <span class="citation">(<a href="sec3.html#ref-INEGI2018cn" role="doc-biblioref">INEGI, 2018a</a>)</span>.</p>
-<p>La MIP proporciona el valor monetario de los bienes vendidos por la actividad de la fila <span class="math inline">\(i\)</span> a la actividad de la columna <span class="math inline">\(j\)</span>, <span class="math inline">\(a_{ij}\)</span>, es decir, las ventas que realiza el sector <span class="math inline">\(i\)</span> al sector <span class="math inline">\(j\)</span>. Sea <span class="math inline">\(p\)</span> y <span class="math inline">\(s\)</span> el valor del total de compras intermedias y ventas intermedias respectivamente; así, la relación entre cada par de actividades, <span class="math inline">\(i\)</span> y <span class="math inline">\(j\)</span> se puede sintetizar en cuatro coeficientes <span class="citation">(<a href="sec3.html#ref-Feser2000" role="doc-biblioref">Feser and Bergman, 2000, p. 6</a>)</span>:</p>
+<p>La matriz de insumo producto (MIP) es un instrumento que permite conocer las relaciones intersectoriales entre las actividades económicas que se desarrollan en una economía nacional a través del registro de las compras y ventas que se suceden entre ellas <span class="citation">(<a href="references.html#ref-INEGI2018cn" role="doc-biblioref">INEGI, 2018a</a>)</span>.</p>
+<p>La MIP proporciona el valor monetario de los bienes vendidos por la actividad de la fila <span class="math inline">\(i\)</span> a la actividad de la columna <span class="math inline">\(j\)</span>, <span class="math inline">\(a_{ij}\)</span>, es decir, las ventas que realiza el sector <span class="math inline">\(i\)</span> al sector <span class="math inline">\(j\)</span>. Sea <span class="math inline">\(p\)</span> y <span class="math inline">\(s\)</span> el valor del total de compras intermedias y ventas intermedias respectivamente; así, la relación entre cada par de actividades, <span class="math inline">\(i\)</span> y <span class="math inline">\(j\)</span> se puede sintetizar en cuatro coeficientes <span class="citation">(<a href="references.html#ref-Feser2000" role="doc-biblioref">Feser and Bergman, 2000, p. 6</a>)</span>:</p>
 <p><span class="math display">\[
 x_{ij}=\frac{a_{ij}}{p_j};\\
 x_{ji}=\frac{a_{ji}}{p_i};\\
@@ -107,7 +108,7 @@ A la letra, Feser y Bergman (2000: 5) explican de este modo los coeficientes ant
 <h2>
 <span class="header-section-number">2.2</span> Desarrollo del procedimiento<a class="anchor" aria-label="anchor" href="#desarrollo-del-procedimiento"><i class="fas fa-link"></i></a>
 </h2>
-<p>En esta sección se desarrolla el procedimiento anterior con información de la MIP de México para 2013 con información a nivel de rama de actividad, clasificada según el Sistema de Clasificación Industrial de América del Norte <span class="citation">(<a href="sec3.html#ref-INEGI2018scian" role="doc-biblioref">INEGI, 2018b</a>)</span>.</p>
+<p>En esta sección se desarrolla el procedimiento anterior con información de la MIP de México para 2013 con información a nivel de rama de actividad, clasificada según el Sistema de Clasificación Industrial de América del Norte <span class="citation">(<a href="references.html#ref-INEGI2018scian" role="doc-biblioref">INEGI, 2018b</a>)</span>.</p>
 <p>Las librerías utilizadas y las funciones personalizadas son:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>

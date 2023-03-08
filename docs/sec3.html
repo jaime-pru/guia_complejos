@@ -69,6 +69,7 @@
 <li><a class="" href="index.html"><span class="header-section-number">1</span> Presentación</a></li>
 <li><a class="" href="sec2.html"><span class="header-section-number">2</span> Identificación de las cadenas productivas</a></li>
 <li><a class="active" href="sec3.html"><span class="header-section-number">3</span> Identificación de los complejos con el indicador de asociación espacial local de Moran</a></li>
+<li><a class="" href="references.html">References</a></li>
 </ul>
 
         <div class="book-extra">
@@ -80,20 +81,20 @@
 <h1>
 <span class="header-section-number">Sección 3</span> Identificación de los complejos con el indicador de asociación espacial local de Moran<a class="anchor" aria-label="anchor" href="#sec3"><i class="fas fa-link"></i></a>
 </h1>
-<p>En esta sección se expone el procedimiento para la identificación de complejos industriales. La propuesta recurre al cálculo de coeficientes de autocorrelación espacial local de Moran, con base en la propuesta de Feser y Bergman <span class="citation">(<a href="sec3.html#ref-Feser-etal2005" role="doc-biblioref">2005</a>)</span>, adaptada a partir de las consideraciones de Anselin <span class="citation">(<a href="sec3.html#ref-Anselin2020local1" role="doc-biblioref">2020</a>)</span>.</p>
-<p>El objetivo es ubicar a nivel municipal las cadenas productivas industriales identificadas a través del método Feser y Bergman <span class="citation">(<a href="sec3.html#ref-Feser2000" role="doc-biblioref">2000</a>)</span> que fueron resultado del análisis por componentes principales del apartado anterior donde se identificaron 9 cadenas productivas industriales: Metalmecánica, Química, Eléctrico-electrónica, Textiles, confección y prendas de vestir, Construcción, Autotransportes, Papel e impresión, Plásticos y fibras sintéticas y Muebles y productos de madera que aparecen en la tabla anterior.</p>
+<p>En esta sección se expone el procedimiento para la identificación de complejos industriales. La propuesta recurre al cálculo de coeficientes de autocorrelación espacial local de Moran, con base en la propuesta de Feser y Bergman <span class="citation">(<a href="references.html#ref-Feser-etal2005" role="doc-biblioref">2005</a>)</span>, adaptada a partir de las consideraciones de Anselin <span class="citation">(<a href="references.html#ref-Anselin2020local1" role="doc-biblioref">2020</a>)</span>.</p>
+<p>El objetivo es ubicar a nivel municipal las cadenas productivas industriales identificadas a través del método Feser y Bergman <span class="citation">(<a href="references.html#ref-Feser2000" role="doc-biblioref">2000</a>)</span> que fueron resultado del análisis por componentes principales del apartado anterior donde se identificaron 9 cadenas productivas industriales: Metalmecánica, Química, Eléctrico-electrónica, Textiles, confección y prendas de vestir, Construcción, Autotransportes, Papel e impresión, Plásticos y fibras sintéticas y Muebles y productos de madera que aparecen en la tabla anterior.</p>
 <div id="breve-descripción-del-método" class="section level2" number="3.1">
 <h2>
 <span class="header-section-number">3.1</span> Breve descripción del método<a class="anchor" aria-label="anchor" href="#breve-descripci%C3%B3n-del-m%C3%A9todo"><i class="fas fa-link"></i></a>
 </h2>
-<p>Siguiendo las ideas de Feser et al. <span class="citation">(<a href="sec3.html#ref-Feser-etal2005" role="doc-biblioref">2005</a>)</span> y González Villarreal et al. (2017), quienes proponen usar el estadístico de asociación espacial local de Getis-Ord (<span class="math inline">\(G_i^*\)</span>) <span class="citation">(<a href="sec3.html#ref-Getis1992" role="doc-biblioref">Getis and Ord, 1992</a>)</span>, aquí más bien se propone el uso del estadistico de asociación espacial local de Moran, propuesto originalmente por Anselin <span class="citation">(<a href="sec3.html#ref-Anselin1995" role="doc-biblioref">1995</a>)</span> y que tiene la forma de:</p>
+<p>Siguiendo las ideas de Feser et al. <span class="citation">(<a href="references.html#ref-Feser-etal2005" role="doc-biblioref">2005</a>)</span> y González Villarreal et al. (2017), quienes proponen usar el estadístico de asociación espacial local de Getis-Ord (<span class="math inline">\(G_i^*\)</span>) <span class="citation">(<a href="references.html#ref-Getis1992" role="doc-biblioref">Getis and Ord, 1992</a>)</span>, aquí más bien se propone el uso del estadistico de asociación espacial local de Moran, propuesto originalmente por Anselin <span class="citation">(<a href="references.html#ref-Anselin1995" role="doc-biblioref">1995</a>)</span> y que tiene la forma de:</p>
 <p><span class="math display">\[
 I_i = c \cdot z_i \sum_j w_{ij} z_j
 \]</span></p>
-<p>La notación anterior corresponde a Anselin <span class="citation">(<a href="sec3.html#ref-Anselin2020local1" role="doc-biblioref">2020</a>)</span>, en ella <span class="math inline">\(I_i\)</span> es el estadístico de asociación espacial local de Moran, <span class="math inline">\(z_i\)</span> y <span class="math inline">\(z_j\)</span> corresponde al valor de la variable en la unidad territorial <span class="math inline">\(i\)</span> y <span class="math inline">\(j\)</span>, que usualmente es el empleo, en términos estandarizados, en tanto, <span class="math inline">\(w_{ij}\)</span> es cada uno de los elementos de la matriz de pesos espaciales estandarizada por fila y, finalmente, <span class="math inline">\(c\)</span> corresponde a una constante dada por <span class="math inline">\(\sum_i z_i^2\)</span>, que no es otra cosa que la suma del valor de la variable estandarizada.</p>
+<p>La notación anterior corresponde a Anselin <span class="citation">(<a href="references.html#ref-Anselin2020local1" role="doc-biblioref">2020</a>)</span>, en ella <span class="math inline">\(I_i\)</span> es el estadístico de asociación espacial local de Moran, <span class="math inline">\(z_i\)</span> y <span class="math inline">\(z_j\)</span> corresponde al valor de la variable en la unidad territorial <span class="math inline">\(i\)</span> y <span class="math inline">\(j\)</span>, que usualmente es el empleo, en términos estandarizados, en tanto, <span class="math inline">\(w_{ij}\)</span> es cada uno de los elementos de la matriz de pesos espaciales estandarizada por fila y, finalmente, <span class="math inline">\(c\)</span> corresponde a una constante dada por <span class="math inline">\(\sum_i z_i^2\)</span>, que no es otra cosa que la suma del valor de la variable estandarizada.</p>
 <p>El <span class="math inline">\(I_i\)</span> puede ser representado en mapas de agrupaciones con cuatro categorías de municipios: i) agrupamientos de municipios con altos valores en la variable utilizada rodeados de unidades territoriales vecinas también con valores altos (agrupamientos Alto-Alto); ii) agrupamientos de unidades territoriales con valores bajos en la variable rodeados de vecinos con esta misma característica (agrupamientos Bajo-Bajo); iii) agrupamientos de unidades territoriales con valores bajos rodeados de vecinos con valores altos (agrupamientos Bajo-Alto); y iv) agrupamientos de unidades territoriales con un conteo alto de la variable de interés rodeados de municipios con un bajo conteo (agrupamientos Alto-Bajo).</p>
 <p>Cuando aquí se dece “alto” o “bajo” es en términos relativos, es decir, valores bajos o altos en el rango de la información utilizada. Las dos últimas categorías, los agrupamientos Bajo-Alto y Alto-Bajo, identifican unidades territoriales como observaciones espaciales atípicas o <em>outliers</em> espaciales.</p>
-<p>Para evitar sobredimensionar la importancia del empleo u ocupación en los municipios más grandes en términos de su empleo absoluto con independencia del papel que éste juegue en la cadena productiva <span class="citation">(<a href="sec3.html#ref-Feser-etal2005" role="doc-biblioref">Feser et al., 2005, p. 403</a>; <a href="sec3.html#ref-GonzalezVillareal2017" role="doc-biblioref">Villarreal et al., 2017, p. 6</a>)</span>, el índice <span class="math inline">\(I_i\)</span> se construye usando como variable los errores (<span class="math inline">\(u_i\)</span>) de una regresión lineal estimada con mínimos cuadrados ordinarios del empleo de cada una de las cadenas productivas en cada municipio sobre el empleo total de dicho municipio <a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Una exposición más detallada de esta consideración puede consultarse en Feser et al. &lt;span class="citation"&gt;(&lt;a href="sec3.html#ref-Feser-etal2005" role="doc-biblioref"&gt;2005&lt;/a&gt;)&lt;/span&gt;.&lt;/p&gt;'><sup>1</sup></a>, es decir:</p>
+<p>Para evitar sobredimensionar la importancia del empleo u ocupación en los municipios más grandes en términos de su empleo absoluto con independencia del papel que éste juegue en la cadena productiva <span class="citation">(<a href="references.html#ref-Feser-etal2005" role="doc-biblioref">Feser et al., 2005, p. 403</a>; <a href="references.html#ref-GonzalezVillareal2017" role="doc-biblioref">Villarreal et al., 2017, p. 6</a>)</span>, el índice <span class="math inline">\(I_i\)</span> se construye usando como variable los errores (<span class="math inline">\(u_i\)</span>) de una regresión lineal estimada con mínimos cuadrados ordinarios del empleo de cada una de las cadenas productivas en cada municipio sobre el empleo total de dicho municipio <a class="footnote-ref" tabindex="0" data-toggle="popover" data-content='&lt;p&gt;Una exposición más detallada de esta consideración puede consultarse en Feser et al. &lt;span class="citation"&gt;(&lt;a href="references.html#ref-Feser-etal2005" role="doc-biblioref"&gt;2005&lt;/a&gt;)&lt;/span&gt;.&lt;/p&gt;'><sup>1</sup></a>, es decir:</p>
 <p><span class="math display">\[
 emp_i=\beta_0+\beta_1empCPi+u_i
 \]</span></p>
@@ -103,7 +104,7 @@ emp_i=\beta_0+\beta_1empCPi+u_i
 <h2>
 <span class="header-section-number">3.2</span> Fuentes de información<a class="anchor" aria-label="anchor" href="#fuentes-de-informaci%C3%B3n"><i class="fas fa-link"></i></a>
 </h2>
-<p>La base geográfica utilizada proviene del Marco Geoestadistico Nacional <span class="citation">(<a href="sec3.html#ref-INEGI2020mgn" role="doc-biblioref">INEGI, 2020a</a>)</span> que contiene 2,469 áreas geoestadísticas municipales (municipios), para la que se construyó una matriz de pesos espaciales de tipo reina de orden 1, en tanto, la información del personal ocupado corresponde al año 2013 y proviene de los Censos Económicos de 2019 <span class="citation">(<a href="sec3.html#ref-INEGIce2020" role="doc-biblioref">INEGI, 2020b</a>)</span>.</p>
+<p>La base geográfica utilizada proviene del Marco Geoestadistico Nacional <span class="citation">(<a href="references.html#ref-INEGI2020mgn" role="doc-biblioref">INEGI, 2020a</a>)</span> que contiene 2,469 áreas geoestadísticas municipales (municipios), para la que se construyó una matriz de pesos espaciales de tipo reina de orden 1, en tanto, la información del personal ocupado corresponde al año 2013 y proviene de los Censos Económicos de 2019 <span class="citation">(<a href="references.html#ref-INEGIce2020" role="doc-biblioref">INEGI, 2020b</a>)</span>.</p>
 </div>
 <div id="desarrollo-del-método" class="section level2" number="3.3">
 <h2>
@@ -427,55 +428,14 @@ emp_i=\beta_0+\beta_1empCPi+u_i
 </tr>
 </tbody>
 </table></div>
-<div id="refs" class="references csl-bib-body hanging-indent">
-<div id="ref-Anselin2020local1" class="csl-entry">
-Anselin, L., 2020. <a href="https://geodacenter.github.io/workbook/6a_local_auto/lab6a.html#lisa-principle">Local spatial autocorrelation (1)</a>. GeoDa Documentation: Workbook.
-</div>
-<div id="ref-Anselin1995" class="csl-entry">
-Anselin, L., 1995. Local indicators of spatial association—LISA. Geographical Analysis 27. <a href="https://doi.org/10.1111/j.1538-4632.1995.tb00338.x">https://doi.org/10.1111/j.1538-4632.1995.tb00338.x</a>
-</div>
-<div id="ref-Feser2000" class="csl-entry">
-Feser, E.J., Bergman, E.M., 2000. National industry cluster templates: A framework for applied regional cluster analysis. Regional Studies 34. <a href="https://doi.org/10.1080/00343400050005844">https://doi.org/10.1080/00343400050005844</a>
-</div>
-<div id="ref-Feser-etal2005" class="csl-entry">
-Feser, E., Sweeney, S., Renski, H., 2005. A descriptive analysis of discrete u.s. Industrial complexes. Journal of Regional Science 45. <a href="https://doi.org/10.1111/j.0022-4146.2005.00376.x">https://doi.org/10.1111/j.0022-4146.2005.00376.x</a>
-</div>
-<div id="ref-Getis1992" class="csl-entry">
-Getis, A., Ord, J.K., 1992. The analysis of spatial association by use of distance statistics. Geographical Analysis 24. <a href="https://doi.org/10.1111/j.1538-4632.1992.tb00261.x">https://doi.org/10.1111/j.1538-4632.1992.tb00261.x</a>
-</div>
-<div id="ref-INEGIce2020" class="csl-entry">
-INEGI, 2020b. <a href="https://www.inegi.org.mx">Censos económicos 2019: metodología</a>. Instituto Nacional de Estadística y Geografía.
-</div>
-<div id="ref-INEGI2020mgn" class="csl-entry">
-INEGI, 2020a. Marco geoestadístico, censo de población y vivienda 2020 integrado. Instituto Nacional de Estadística y Geografía.
-</div>
-<div id="ref-INEGI2018cn" class="csl-entry">
-INEGI, 2018a. <a href="https://www.inegi.org.mx/contenidos/programas/mip/2013/doc/met_mip.pdf">Sistema de cuentas nacionales de méxico: Fuentes y metodologías, año base 2013</a>. Instituto Nacional de Estadística y Geografía.
-</div>
-<div id="ref-INEGI2018scian" class="csl-entry">
-INEGI, 2018b. <a href="https://www.inegi.org.mx/contenidos/productos/prod_serv/contenidos/espanol/bvinegi/productos/nueva_estruc/702825099695.pdf">Sistema de clasificación industrial de américa del norte, méxico : SCIAN 2018</a>.
-</div>
-<div id="ref-Prudencio2023" class="csl-entry">
-Prudencio-Vázquez, J.A., 2023. Técnicas de análisis regional para detectar clústeres industriales: Una aplicación para méxico bajo la noción de complejos industriales. Universidad Autónoma Metropolitana Unidad Azcapotzalco.
-</div>
-<div id="ref-GonzalezVillareal2017" class="csl-entry">
-Villarreal, A.G., Mack, E.A., Flores, M., 2017. Industrial complexes in mexico: Implications for regional industrial policy based on related variety and smart specialization. Regional Studies 51. <a href="https://doi.org/10.1080/00343404.2015.1114174">https://doi.org/10.1080/00343404.2015.1114174</a>
 </div>
 </div>
 </div>
 </div>
-</div>
-</div>
-
-
-
-
-
-
 
   <div class="chapter-nav">
 <div class="prev"><a href="sec2.html"><span class="header-section-number">2</span> Identificación de las cadenas productivas</a></div>
-<div class="empty"></div>
+<div class="next"><a href="references.html">References</a></div>
 </div></main><div class="col-md-3 col-lg-2 d-none d-md-block sidebar sidebar-chapter">
     <nav id="toc" data-toggle="toc" aria-label="On this page"><h2>On this page</h2>
       <ul class="nav navbar-nav">
