@@ -44,7 +44,7 @@ ce_rama2013<-(read_excel("D:/Industrial_Complexes/Bases de datos/ce_rama2013.xls
   dplyr::select(-nom_rama)
 ```
 
-Luego, se asigna a cada rama en la base de los censos económicos la cadena productiva a la que pertence: 
+Luego, se asigna a cada rama en la base de los censos económicos la cadena productiva a la que pertenece: 
 
 ```{r}
 ce_rama2013_ci<- ce_rama2013 %>% 
