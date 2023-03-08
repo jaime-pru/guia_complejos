@@ -1,0 +1,26 @@
+--- 
+title: "A Minimal Book Example"
+author: "Yihui Xie"
+date: "`r Sys.Date()`"
+site: bookdown::bookdown_site
+output: bookdown::gitbook
+documentclass: book
+bibliography: [book.bib, packages.bib]
+biblio-style: apalike
+link-citations: yes
+github-repo: rstudio/bookdown-demo
+description: "This is a minimal example of using the bookdown package to write a book. The output format for this example is bookdown::gitbook."
+---
+
+# Presentación
+
+En este documento se expone el desarrollo del método para la construcción de complejos industriales regionales utilizado por Prudencio [-@Prudencio2023]. El método se divide en dos grandes pasos.  
+
+En el primero, se construyen cadenas productivas a partir de la Matriz de Insumo Producto de 2013 de INEGI [-@INEGI2018cn] con el enfoque de Feser y Bergman [-@Feser2000] que recurren al análisis de conglomerados con componentes principales. En el segundo, siguiendo a Feser et al. [-@Feser-etal2005] e incorporando las observaciones de Anselin [-@Anselin2020local1] se identifican las cadenas productivas a nivel municipal a través de índices de asociación espacial local que usan información del personal ocupado de INEGI [-@INEGIce2020].
+
+```{r include=FALSE}
+# automatically create a bib database for R packages
+knitr::write_bib(c(
+  .packages(), 'bookdown', 'knitr', 'rmarkdown'
+), 'packages.bib')
+```

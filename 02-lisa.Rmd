@@ -1,0 +1,286 @@
+# Identificación de los complejos con el indicador de asociación espacial local de Moran {#sec3}
+
+En esta sección se expone el procedimiento para la identificación de  complejos industriales. La propuesta recurre al cálculo de coeficientes de autocorrelación espacial local de Moran, con base en la propuesta de Feser y Bergman [-@Feser-etal2005], adaptada a partir de las consideraciones de Anselin [-@Anselin2020local1].
+
+El objetivo es ubicar a nivel municipal las cadenas productivas industriales identificadas a través del método Feser y Bergman [-@Feser2000] que fueron resultado del análisis por componentes principales del apartado anterior donde se identificaron 9 cadenas productivas industriales: Metalmecánica, Química, Eléctrico-electrónica, Textiles, confección y prendas de vestir, Construcción, Autotransportes, Papel e impresión, Plásticos y fibras sintéticas y Muebles y productos de madera que aparecen en la tabla anterior.
+
+## Breve descripción del método
+
+Siguiendo las ideas de Feser et al. [-@Feser-etal2005] y González Villarreal et al. (2017), quienes proponen usar el estadístico de asociación espacial local de Getis-Ord ($G_i^*$) [@Getis1992], aquí más bien se propone el uso del estadistico de asociación espacial local de Moran, propuesto originalmente por Anselin [-@Anselin1995] y que tiene la forma de:
+
+$$
+I_i = c \cdot z_i \sum_j w_{ij} z_j
+$$
+
+La notación anterior corresponde a Anselin [-@Anselin2020local1], en ella $I_i$ es el estadístico de asociación espacial local de Moran, $z_i$ y $z_j$ corresponde al valor de la variable en la unidad territorial $i$ y $j$, que usualmente es el empleo, en términos estandarizados, en tanto, $w_{ij}$ es cada uno de los elementos de la matriz de pesos espaciales estandarizada por fila y, finalmente, $c$ corresponde a una constante dada por $\sum_i z_i^2$, que no es otra cosa que la suma del valor de la variable estandarizada.
+
+El $I_i$ puede  ser representado en mapas de agrupaciones con cuatro categorías de municipios: i) agrupamientos de municipios con altos valores en la variable utilizada rodeados de unidades territoriales vecinas también con valores altos (agrupamientos Alto-Alto); ii) agrupamientos de unidades territoriales con valores bajos en la variable rodeados de vecinos con esta misma característica (agrupamientos Bajo-Bajo); iii) agrupamientos de unidades territoriales con valores bajos rodeados de vecinos con valores altos (agrupamientos Bajo-Alto); y iv) agrupamientos de unidades territoriales con un conteo alto de la variable de interés rodeados de municipios con un bajo conteo (agrupamientos Alto-Bajo).  
+
+Cuando aquí se dece "alto" o "bajo" es en términos relativos, es decir, valores bajos o altos en el rango de la información utilizada. Las dos últimas categorías, los agrupamientos Bajo-Alto y Alto-Bajo, identifican unidades territoriales  como observaciones espaciales atípicas o _outliers_ espaciales.
+
+Para evitar sobredimensionar la importancia del empleo u ocupación en los municipios más grandes en términos de su empleo absoluto con independencia del papel que éste juegue en la cadena productiva [@GonzalezVillareal2017, p. 6; @Feser-etal2005, p. 403], el índice $I_i$ se construye usando como variable los errores ($u_i$) de una regresión lineal estimada con mínimos cuadrados ordinarios del empleo de cada una de las cadenas productivas en cada municipio sobre el empleo total de dicho municipio ^[Una exposición más detallada de esta consideración puede consultarse en Feser et al. [-@Feser-etal2005].], es decir:
+
+$$
+emp_i=\beta_0+\beta_1empCPi+u_i
+$$
+
+Donde $emp_i$ es el empleo total del municipio $i$, $empCPi$ corresponde al empleo de la cadena productiva considerada en el municipio $i$. El enfoque de Feser et al. (2005) y Villarreal et al. (2017) tiene algunas debilidades, mismas que a continuación se enuncian, así como una propuesta para subsanarlas en este trabajo. 
+
+## Fuentes de información
+
+La base geográfica utilizada proviene del Marco Geoestadistico Nacional [@INEGI2020mgn] que contiene 2,469 áreas geoestadísticas municipales (municipios), para la que se construyó una matriz de pesos espaciales de tipo reina de orden 1, en tanto, la información del personal ocupado corresponde al año 2013 y proviene de los Censos Económicos de 2019 [@INEGIce2020].
+
+## Desarrollo del método
+
+### Preparación de la base de datos
+
+Para obtener los errores de la regresión lineal con base en la cual se construyen los indicadores locales de asociación espacial primero es necesario unir la información que identifica cada rama con una cadena en particular, con la información del personal ocupado total y por cadena y con la base de datos espacial. 
+
+Primero se carga la  base de datos con la información de los Censos Económicos que contiene los datos del personal ocupado:
+
+```{r}
+ce_rama2013<-(read_excel("D:/Industrial_Complexes/Bases de datos/ce_rama2013.xlsx",sheet = 'edición')) %>%
+  filter(rama!="mun") %>%
+  dplyr::select(-nom_rama)
+```
+
+Luego, se asigna a cada rama en la base de los censos económicos la cadena productiva a la que pertence: 
+
+```{r}
+ce_rama2013_ci<- ce_rama2013 %>% 
+  left_join(ramas_ci_final, by='rama') 
+```
+
+En un siguiente paso, se pasa de una base apilada (larga) a una base ancha, lo que prepara la información para asociarla a la base de datos espacial:
+
+```{r}
+ce_rama2013_ci_po<-ce_rama2013_ci %>%
+  filter(!is.na(po)) %>%
+  mutate(poblacion=po) %>%
+  dplyr::select(cvemun,ent,mun,rama,poblacion,po,cluster)%>%
+  pivot_wider(names_from =cluster, values_from = po)  %>% 
+  group_by(cvemun) %>% 
+  summarise_at(c("poblacion","RC12","RC6","RC17","RC10","RC20","RC15","RC3","RC8","RC13"),sum,na.rm=TRUE) %>% 
+  dplyr::select(cvemun,poblacion,clusters)
+```
+
+Se procede ahora a cargar la base de datos geográfica, es decir, la que contiene la información georreerenciada para los 2,496 municipios y a la que se asociará la información de los censos económicos:
+
+```{r}
+# Base geográfica municipal
+mun <- sf::st_read("Bases de datos/shp__mun_R/mun_mex.shp")
+names(ce_rama2013_ci_po)[1]<-'CVEMUN'
+```
+
+Ahora, se asocia la información espacial con la no espacial:
+```{r}
+mun_1<-ce_rama2013_ci_po %>% left_join(mun, by='CVEMUN')
+```
+
+
+### Obtención de los errores del modelo de regresión
+
+Una vez cargada la base de datos espacial que contiene la información de los censos económicos, `mun`, se estima la regresión del empleo total de cada municipio (`po`) sobre el empleo en el municipio de cada una de las cadenas identificadas:
+
+```{r}
+
+mun_lm<- mun_1 %>% 
+  mutate(
+    re_RC3=lm(data = mun, formula = poblacion ~ RC3)$residuals,
+    re_RC6=lm(data = mun, formula = poblacion ~ RC6)$residuals,
+    re_RC8=lm(data = mun, formula = poblacion ~ RC8)$residuals,
+    re_RC10=lm(data = mun, formula = poblacion ~ RC10)$residuals,
+    re_RC12=lm(data = mun, formula = poblacion ~ RC12)$residuals,
+    re_RC13=lm(data = mun, formula = poblacion ~ RC13)$residuals,
+    re_RC15=lm(data = mun, formula = poblacion ~ RC15)$residuals,
+    re_RC17=lm(data = mun, formula = poblacion ~ RC17)$residuals,
+    re_RC20=lm(data = mun, formula = poblacion ~ RC20)$residuals
+         
+         ) %>%
+  dplyr::select(everything(),-geometry,geometry)
+
+```
+
+Esto añade a la base de datos espacial los errores de la regresión para poder operar con ellos.
+
+### Cálculo del estadístico de asociación espacial
+
+Una vez que se tienen los errores de la regresión guardados como nuevas variables en la base de datos espacial, se computa el estadístico $I_i$ con dicha variable, usando la estructura espacial de tipo reina de orden 1. Para crear dicha estructura espacial se procede como:
+
+```{r}
+#Definición de la estructura espacial
+q_1 <- rgeoda::queen_weights(sf::st_read("Bases de datos/shp__mun_R/mun_mex.shp"))
+
+```
+
+Ahora, se estima cada uno de los coeficientes de asociación espacial local de Moran y se guardan en sus respectivos objetos:
+
+```{r}
+#Crea un objeto de tipo LISA con la estructura espacial definida que contiene el estatistico Ii
+Icl3 <- local_moran(w=q_1, df=mun_lm["re_RC3"])
+Icl6 <- local_moran(w=q_1, df=mun_lm["re_RC6"])
+Icl8 <- local_moran(w=q_1, df=mun_lm["re_RC8"])
+Icl10 <- local_moran(w=q_1, df=mun_lm["re_RC10"])
+Icl12 <- local_moran(w=q_1, df=mun_lm["re_RC12"])
+Icl13 <- local_moran(w=q_1, df=mun_lm["re_RC13"])
+Icl15 <- local_moran(w=q_1, df=mun_lm["re_RC15"])
+Icl17 <- local_moran(w=q_1, df=mun_lm["re_RC17"])
+Icl20 <- local_moran(w=q_1, df=mun_lm["re_RC20"])
+```
+
+### Visualización de los complejos industriales: mapas de agrupamientos {.tabset}
+
+De acuerdo con el método, los municipios que integran los complejos industriales  de cada cadena productiva identificada son aquellos cuyo valor del indicador local de asociación espacial de Moran, $I_i$, es estadísticamente significativo al 5% y que además forman parte del agrupamiento Alto-Alto. Dichos municipios aparecen en los siguientes mapas de agrupamientos, junto con los municipios de las otras categorías. 
+
+#### Metal-mecánica
+
+```{r}
+ mapa_funcion(mun,Icl3)
+```
+
+#### Química
+
+
+```{r}
+ mapa_funcion(mun,Icl6)
+```
+
+#### Eléctrico-electrónica
+
+```{r}
+ mapa_funcion(mun,Icl8)
+```
+
+#### Textiles, confección y prendas de vestir
+
+```{r}
+ mapa_funcion(mun,Icl10)
+```
+
+#### Construcción
+
+```{r}
+ mapa_funcion(mun,Icl12)
+```
+
+#### Autotransportes
+
+```{r}
+ mapa_funcion(mun,Icl13)
+```
+
+#### Papel e impresión
+
+```{r}
+ mapa_funcion(mun,Icl15)
+```
+
+#### Plásticos y fibras sintéticas
+
+```{r}
+ mapa_funcion(mun,Icl17)
+```
+
+#### Muebles y productos de madera
+
+```{r}
+ mapa_funcion(mun,Icl20)
+```
+
+### Visualización de los complejos industriales: Mapas de significancia {.tabset}
+
+Además, es usual presentar los resultados del mapa de agrupamientos junto con el llamado mapa de significancia, que muestra la signficancia individual de cada municipio en diferentes niveles:
+
+```{r eval=FALSE, include=FALSE}
+### Mapa de significancia
+#### Preliminares
+#### Extracción de los valores p asociados a cada observación
+lisa_p <- lisa_pvalues(Icl3)
+#### Definición de las etiquetas de cada grupo de valores p
+p_labels <- c("Not significant", "p <= 0.05", "p <= 0.01", "p <= 0.001")
+#### Definición de los colores de cada grupo de valores p
+p_colors <- c("#eeeeee", "#84f576", "#53c53c", "#348124")
+# Mapa de significancia: construcción
+plot(st_geometry(mun), 
+     col=sapply(lisa_p, function(x){
+       if (x <= 0.001) return(p_colors[4])
+       else if (x <= 0.01) return(p_colors[3])
+       else if (x <= 0.05) return (p_colors[2])
+       else return(p_colors[1])
+       }), 
+     border = "#333333", lwd=0.2)
+title(main = "Moran Local para la cadena metalmecánica")
+legend('bottomleft', legend = p_labels, fill = p_colors, border = "#eeeeee")
+```
+
+#### Metal-mecánica
+
+```{r}
+ mapa_sig(mun,Icl3)
+```
+
+#### Química
+
+
+```{r}
+ mapa_sig(mun,Icl6)
+```
+
+#### Eléctrico-electrónica
+
+```{r}
+ mapa_sig(mun,Icl8)
+```
+
+#### Textiles, confección y prendas de vestir
+
+```{r}
+ mapa_sig(mun,Icl10)
+```
+
+#### Construcción
+
+```{r}
+ mapa_sig(mun,Icl12)
+```
+
+#### Autotransportes
+
+```{r}
+ mapa_sig(mun,Icl13)
+```
+
+#### Papel e impresión
+
+```{r}
+ mapa_sig(mun,Icl15)
+```
+
+#### Plásticos y fibras sintéticas
+
+```{r}
+ mapa_sig(mun,Icl17)
+```
+
+#### Muebles y productos de madera
+
+```{r}
+ mapa_sig(mun,Icl20)
+```
+
+
+La siguiente tabla resume los resultados del número de municipios para cada cadena productiva, tanto los que integran los complejos industriales como los que forman parte de la categoría Alto-Bajo
+
+| Cadena productiva                        	| Municipios alto-alto 	| Municipios alto-bajo 	|
+|------------------------------------------	|----------------------	|----------------------	|
+| Metalmecánica.                           	| 71                   	| 11                   	|
+| Química.                                 	| 63                   	| 24                   	|
+| Eléctrico-electrónica.                   	| 81                   	| 8                    	|
+| Textiles, confección y prendas de vestir 	| 75                   	| 7                    	|
+| Construcción.                            	| 73                   	| 23                   	|
+| Autotransportes.                         	| 69                   	| 11                   	|
+| Papel e impresión.                       	| 79                   	| 6                    	|
+| Plásticos y fibras sintéticas.           	| 64                   	| 18                   	|
+| Muebles y productos de madera.           	| 59                   	| 14                   	|
+: Tabla 1. Complejos industriales industriales, 2013
+
