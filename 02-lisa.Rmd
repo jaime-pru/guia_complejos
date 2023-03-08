@@ -135,56 +135,56 @@ De acuerdo con el método, los municipios que integran los complejos industriale
 #### Metal-mecánica
 
 ```{r}
- mapa_funcion(mun,Icl3)
+# mapa_funcion(mun,Icl3)
 ```
 
 #### Química
 
 
 ```{r}
- mapa_funcion(mun,Icl6)
+# mapa_funcion(mun,Icl6)
 ```
 
 #### Eléctrico-electrónica
 
 ```{r}
- mapa_funcion(mun,Icl8)
+# mapa_funcion(mun,Icl8)
 ```
 
 #### Textiles, confección y prendas de vestir
 
 ```{r}
- mapa_funcion(mun,Icl10)
+# mapa_funcion(mun,Icl10)
 ```
 
 #### Construcción
 
 ```{r}
- mapa_funcion(mun,Icl12)
+# mapa_funcion(mun,Icl12)
 ```
 
 #### Autotransportes
 
 ```{r}
- mapa_funcion(mun,Icl13)
+# mapa_funcion(mun,Icl13)
 ```
 
 #### Papel e impresión
 
 ```{r}
- mapa_funcion(mun,Icl15)
+# mapa_funcion(mun,Icl15)
 ```
 
 #### Plásticos y fibras sintéticas
 
 ```{r}
- mapa_funcion(mun,Icl17)
+# mapa_funcion(mun,Icl17)
 ```
 
 #### Muebles y productos de madera
 
 ```{r}
- mapa_funcion(mun,Icl20)
+# mapa_funcion(mun,Icl20)
 ```
 
 ### Visualización de los complejos industriales: Mapas de significancia {.tabset}
@@ -216,56 +216,56 @@ legend('bottomleft', legend = p_labels, fill = p_colors, border = "#eeeeee")
 #### Metal-mecánica
 
 ```{r}
- mapa_sig(mun,Icl3)
+# mapa_sig(mun,Icl3)
 ```
 
 #### Química
 
 
 ```{r}
- mapa_sig(mun,Icl6)
+# mapa_sig(mun,Icl6)
 ```
 
 #### Eléctrico-electrónica
 
 ```{r}
- mapa_sig(mun,Icl8)
+# mapa_sig(mun,Icl8)
 ```
 
 #### Textiles, confección y prendas de vestir
 
 ```{r}
- mapa_sig(mun,Icl10)
+# mapa_sig(mun,Icl10)
 ```
 
 #### Construcción
 
 ```{r}
- mapa_sig(mun,Icl12)
+# mapa_sig(mun,Icl12)
 ```
 
 #### Autotransportes
 
 ```{r}
- mapa_sig(mun,Icl13)
+# mapa_sig(mun,Icl13)
 ```
 
 #### Papel e impresión
 
 ```{r}
- mapa_sig(mun,Icl15)
+# mapa_sig(mun,Icl15)
 ```
 
 #### Plásticos y fibras sintéticas
 
 ```{r}
- mapa_sig(mun,Icl17)
+# mapa_sig(mun,Icl17)
 ```
 
 #### Muebles y productos de madera
 
 ```{r}
- mapa_sig(mun,Icl20)
+# mapa_sig(mun,Icl20)
 ```
 
 

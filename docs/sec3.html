@@ -135,8 +135,8 @@ emp_i=\beta_0+\beta_1empCPi+u_i
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cvemun</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise_all.html">summarise_at</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">"poblacion"</span>,<span class="st">"RC12"</span>,<span class="st">"RC6"</span>,<span class="st">"RC17"</span>,<span class="st">"RC10"</span>,<span class="st">"RC20"</span>,<span class="st">"RC15"</span>,<span class="st">"RC3"</span>,<span class="st">"RC8"</span>,<span class="st">"RC13"</span><span class="op">)</span>,<span class="va">sum</span>,na.rm<span class="op">=</span><span class="cn">TRUE</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cvemun</span>,<span class="va">poblacion</span>,<span class="va">clusters</span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Warning: Using an external vector in selections was
-## deprecated in tidyselect 1.1.0.
+<pre><code>## Warning: Using an external vector in selections was deprecated in
+## tidyselect 1.1.0.
 ## ℹ Please use `all_of()` or `any_of()` instead.
 ##   # Was:
 ##   data %&gt;% select(clusters)
@@ -223,72 +223,63 @@ emp_i=\beta_0+\beta_1empCPi+u_i
 <span class="header-section-number">3.3.4.1</span> Metal-mecánica<a class="anchor" aria-label="anchor" href="#metal-mec%C3%A1nica"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl3</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-50-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl3)</span></span></code></pre></div>
 </div>
 <div id="química" class="section level4" number="3.3.4.2">
 <h4>
 <span class="header-section-number">3.3.4.2</span> Química<a class="anchor" aria-label="anchor" href="#qu%C3%ADmica"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl6</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-51-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl6)</span></span></code></pre></div>
 </div>
 <div id="eléctrico-electrónica" class="section level4" number="3.3.4.3">
 <h4>
 <span class="header-section-number">3.3.4.3</span> Eléctrico-electrónica<a class="anchor" aria-label="anchor" href="#el%C3%A9ctrico-electr%C3%B3nica"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl8</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-52-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl8)</span></span></code></pre></div>
 </div>
 <div id="textiles-confección-y-prendas-de-vestir" class="section level4" number="3.3.4.4">
 <h4>
 <span class="header-section-number">3.3.4.4</span> Textiles, confección y prendas de vestir<a class="anchor" aria-label="anchor" href="#textiles-confecci%C3%B3n-y-prendas-de-vestir"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl10</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-53-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl10)</span></span></code></pre></div>
 </div>
 <div id="construcción" class="section level4" number="3.3.4.5">
 <h4>
 <span class="header-section-number">3.3.4.5</span> Construcción<a class="anchor" aria-label="anchor" href="#construcci%C3%B3n"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl12</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-54-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl12)</span></span></code></pre></div>
 </div>
 <div id="autotransportes" class="section level4" number="3.3.4.6">
 <h4>
 <span class="header-section-number">3.3.4.6</span> Autotransportes<a class="anchor" aria-label="anchor" href="#autotransportes"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl13</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-55-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl13)</span></span></code></pre></div>
 </div>
 <div id="papel-e-impresión" class="section level4" number="3.3.4.7">
 <h4>
 <span class="header-section-number">3.3.4.7</span> Papel e impresión<a class="anchor" aria-label="anchor" href="#papel-e-impresi%C3%B3n"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl15</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-56-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl15)</span></span></code></pre></div>
 </div>
 <div id="plásticos-y-fibras-sintéticas" class="section level4" number="3.3.4.8">
 <h4>
 <span class="header-section-number">3.3.4.8</span> Plásticos y fibras sintéticas<a class="anchor" aria-label="anchor" href="#pl%C3%A1sticos-y-fibras-sint%C3%A9ticas"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl17</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-57-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl17)</span></span></code></pre></div>
 </div>
 <div id="muebles-y-productos-de-madera" class="section level4" number="3.3.4.9">
 <h4>
 <span class="header-section-number">3.3.4.9</span> Muebles y productos de madera<a class="anchor" aria-label="anchor" href="#muebles-y-productos-de-madera"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_funcion</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl20</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-58-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_funcion(mun,Icl20)</span></span></code></pre></div>
 </div>
 </div>
 <div id="visualización-de-los-complejos-industriales-mapas-de-significancia" class="section level3 tabset" number="3.3.5">
@@ -301,72 +292,63 @@ emp_i=\beta_0+\beta_1empCPi+u_i
 <span class="header-section-number">3.3.5.1</span> Metal-mecánica<a class="anchor" aria-label="anchor" href="#metal-mec%C3%A1nica-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl3</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-60-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl3)</span></span></code></pre></div>
 </div>
 <div id="química-1" class="section level4" number="3.3.5.2">
 <h4>
 <span class="header-section-number">3.3.5.2</span> Química<a class="anchor" aria-label="anchor" href="#qu%C3%ADmica-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl6</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-61-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl6)</span></span></code></pre></div>
 </div>
 <div id="eléctrico-electrónica-1" class="section level4" number="3.3.5.3">
 <h4>
 <span class="header-section-number">3.3.5.3</span> Eléctrico-electrónica<a class="anchor" aria-label="anchor" href="#el%C3%A9ctrico-electr%C3%B3nica-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl8</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-62-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl8)</span></span></code></pre></div>
 </div>
 <div id="textiles-confección-y-prendas-de-vestir-1" class="section level4" number="3.3.5.4">
 <h4>
 <span class="header-section-number">3.3.5.4</span> Textiles, confección y prendas de vestir<a class="anchor" aria-label="anchor" href="#textiles-confecci%C3%B3n-y-prendas-de-vestir-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl10</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-63-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl10)</span></span></code></pre></div>
 </div>
 <div id="construcción-1" class="section level4" number="3.3.5.5">
 <h4>
 <span class="header-section-number">3.3.5.5</span> Construcción<a class="anchor" aria-label="anchor" href="#construcci%C3%B3n-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl12</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-64-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl12)</span></span></code></pre></div>
 </div>
 <div id="autotransportes-1" class="section level4" number="3.3.5.6">
 <h4>
 <span class="header-section-number">3.3.5.6</span> Autotransportes<a class="anchor" aria-label="anchor" href="#autotransportes-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl13</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-65-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl13)</span></span></code></pre></div>
 </div>
 <div id="papel-e-impresión-1" class="section level4" number="3.3.5.7">
 <h4>
 <span class="header-section-number">3.3.5.7</span> Papel e impresión<a class="anchor" aria-label="anchor" href="#papel-e-impresi%C3%B3n-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl15</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-66-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl15)</span></span></code></pre></div>
 </div>
 <div id="plásticos-y-fibras-sintéticas-1" class="section level4" number="3.3.5.8">
 <h4>
 <span class="header-section-number">3.3.5.8</span> Plásticos y fibras sintéticas<a class="anchor" aria-label="anchor" href="#pl%C3%A1sticos-y-fibras-sint%C3%A9ticas-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl17</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-67-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl17)</span></span></code></pre></div>
 </div>
 <div id="muebles-y-productos-de-madera-1" class="section level4" number="3.3.5.9">
 <h4>
 <span class="header-section-number">3.3.5.9</span> Muebles y productos de madera<a class="anchor" aria-label="anchor" href="#muebles-y-productos-de-madera-1"><i class="fas fa-link"></i></a>
 </h4>
 <div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span> <span class="fu">mapa_sig</span><span class="op">(</span><span class="va">mun</span>,<span class="va">Icl20</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-68-1.png" width="672"></div>
+<code class="sourceCode R"><span><span class="co"># mapa_sig(mun,Icl20)</span></span></code></pre></div>
 <p>La siguiente tabla resume los resultados del número de municipios para cada cadena productiva, tanto los que integran los complejos industriales como los que forman parte de la categoría Alto-Bajo</p>
 <div class="inline-table"><table class="table table-sm">
 <caption>Tabla 1. Complejos industriales industriales, 2013</caption>
