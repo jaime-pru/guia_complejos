@@ -1,12 +1,12 @@
 # Identificación de los complejos con el indicador de asociación espacial local de Moran {#sec3}
 
-En esta sección se expone el procedimiento para la identificación de  complejos industriales. La propuesta recurre al cálculo de coeficientes de autocorrelación espacial local de Moran, con base en la propuesta de Feser y Bergman [-@Feser-etal2005], adaptada a partir de las consideraciones de Anselin [-@Anselin2020local1].
+En esta sección se expone el procedimiento para la identificación de  complejos industriales, es decir, la espacialización de las cadenas identificadas en el apartado previo. La propuesta recurre al cálculo de coeficientes de autocorrelación espacial local de Moran, con base en la propuesta de Feser y Bergman [-@Feser-etal2005], adaptada a partir de las consideraciones de Anselin [-@Anselin2020local1].
 
-El objetivo es ubicar a nivel municipal las cadenas productivas industriales identificadas a través del método Feser y Bergman [-@Feser2000] que fueron resultado del análisis por componentes principales del apartado anterior donde se identificaron 9 cadenas productivas industriales: Metalmecánica, Química, Eléctrico-electrónica, Textiles, confección y prendas de vestir, Construcción, Autotransportes, Papel e impresión, Plásticos y fibras sintéticas y Muebles y productos de madera que aparecen en la tabla anterior.
+El objetivo es ubicar a nivel municipal las cadenas productivas industriales identificadas a través del método Feser y Bergman [-@Feser2000] que fueron resultado del análisis por componentes principales del apartado anterior donde se identificaron 9 cadenas productivas industriales: Metalmecánica, Química, Eléctrico-electrónica, Textiles, confección y prendas de vestir, Construcción, Autotransportes, Papel e impresión, Plásticos y fibras sintéticas y Muebles.
 
 ## Breve descripción del método
 
-Siguiendo las ideas de Feser et al. [-@Feser-etal2005] y González Villarreal et al. (2017), quienes proponen usar el estadístico de asociación espacial local de Getis-Ord ($G_i^*$) [@Getis1992], aquí más bien se propone el uso del estadistico de asociación espacial local de Moran, propuesto originalmente por Anselin [-@Anselin1995] y que tiene la forma de:
+A diferencia de Feser et al. [-@Feser-etal2005] y González Villarreal et al. (2017), quienes proponen usar el estadístico de asociación espacial local de Getis-Ord ($G_i^*$) [@Getis1992], aquí más se propone el uso del estadístico de asociación espacial local de Moran, propuesto originalmente por Anselin [-@Anselin1995] y que tiene la forma de:
 
 $$
 I_i = c \cdot z_i \sum_j w_{ij} z_j
@@ -34,26 +34,26 @@ La base geográfica utilizada proviene del Marco Geoestadistico Nacional [@INEGI
 
 ### Preparación de la base de datos
 
-Para obtener los errores de la regresión lineal con base en la cual se construyen los indicadores locales de asociación espacial primero es necesario unir la información que identifica cada rama con una cadena en particular, con la información del personal ocupado total y por cadena y con la base de datos espacial. 
+Para obtener los errores de la regresión lineal con base en la cual se construyen los indicadores locales de asociación espacial primero es necesario preprar una base de datos del empleo a por cadena a nivel municipal. Para ello, debemos unir la información que identifica cada actividad con una cadena en particular y con la base de datos espacial. 
 
-Primero se carga la  base de datos con la información de los Censos Económicos que contiene los datos del personal ocupado:
+Primero se carga la  base de datos con la información de los Censos Económicos que contiene los datos del personal ocupado, se carga la hoja que muestra los datos limpios, es decir, sin encabezados y con etiquetas simplificadas:
 
-```{r}
-ce_rama2013<-(read_excel("D:/Industrial_Complexes/Bases de datos/ce_rama2013.xlsx",sheet = 'edición')) %>%
+```{r warning=FALSE}
+ce_rama2013<-(read_excel("Bases de datos/ce_rama2013.xlsx",sheet = 'edición')) %>%
   filter(rama!="mun") %>%
   dplyr::select(-nom_rama)
 ```
 
-Luego, se asigna a cada rama en la base de los censos económicos la cadena productiva a la que pertenece: 
+Una vez cargada la base de datos, se asigna a cada actividad la cadena productiva a la que pertenece, tomando la información del objeto `ramas_ci_final` creado preciamente.
 
 ```{r}
 ce_rama2013_ci<- ce_rama2013 %>% 
   left_join(ramas_ci_final, by='rama') 
 ```
 
-En un siguiente paso, se pasa de una base apilada (larga) a una base ancha, lo que prepara la información para asociarla a la base de datos espacial:
+Ahora, para preparar la información en aras de asociarla a la base espacial, es necesario pasar de su forma apilada (larga) a una base ancha, en donde se obtiene a nivel municipal de todas las actividades que integran una cadena. Esto se hace con:
 
-```{r}
+```{r warning=TRUE}
 ce_rama2013_ci_po<-ce_rama2013_ci %>%
   filter(!is.na(po)) %>%
   mutate(poblacion=po) %>%
@@ -64,56 +64,52 @@ ce_rama2013_ci_po<-ce_rama2013_ci %>%
   dplyr::select(cvemun,poblacion,clusters)
 ```
 
-Se procede ahora a cargar la base de datos geográfica, es decir, la que contiene la información georreerenciada para los 2,496 municipios y a la que se asociará la información de los censos económicos:
+Para asociar la base anterior a una base geográfica, primero debemos cargar esta última. La base geográfica contiene información georreerenciada para los 2,458 municipios de México y se carga con:
 
-```{r}
+```{r warning=FALSE}
 # Base geográfica municipal
-mun <- sf::st_read("Bases de datos/shp__mun_R/mun_mex.shp")
-names(ce_rama2013_ci_po)[1]<-'CVEMUN'
+mun <- sf::st_read("Bases de datos/shp__mun_R/mun.shp")
+names(ce_rama2013_ci_po)[1]<-'CVEGEO'#Cambia el nombre de la columna 1 para llevar a cabo la unión
 ```
 
-Ahora, se asocia la información espacial con la no espacial:
+Ahora, se asocia la información espacial con la no espacial y se eliminan los valores perdidos.
 ```{r}
-mun_1<-ce_rama2013_ci_po %>% left_join(mun, by='CVEMUN')
+mun_1<- mun %>% left_join(ce_rama2013_ci_po, by='CVEGEO')
+mun_1[is.na(mun_1)]=0
 ```
-
 
 ### Obtención de los errores del modelo de regresión
 
-Una vez cargada la base de datos espacial que contiene la información de los censos económicos, `mun`, se estima la regresión del empleo total de cada municipio (`po`) sobre el empleo en el municipio de cada una de las cadenas identificadas:
+Una vez cargada la base de datos espacial que contiene la información de los censos económicos, `mun_1`, se estima la regresión del empleo total de cada municipio (`po`) sobre el empleo en el municipio de cada una de las cadenas identificadas:
 
 ```{r}
-
 mun_lm<- mun_1 %>% 
   mutate(
-    re_RC3=lm(data = mun, formula = poblacion ~ RC3)$residuals,
-    re_RC6=lm(data = mun, formula = poblacion ~ RC6)$residuals,
-    re_RC8=lm(data = mun, formula = poblacion ~ RC8)$residuals,
-    re_RC10=lm(data = mun, formula = poblacion ~ RC10)$residuals,
-    re_RC12=lm(data = mun, formula = poblacion ~ RC12)$residuals,
-    re_RC13=lm(data = mun, formula = poblacion ~ RC13)$residuals,
-    re_RC15=lm(data = mun, formula = poblacion ~ RC15)$residuals,
-    re_RC17=lm(data = mun, formula = poblacion ~ RC17)$residuals,
-    re_RC20=lm(data = mun, formula = poblacion ~ RC20)$residuals
-         
-         ) %>%
+    re_RC3=lm(data = mun_1, formula = poblacion ~ RC3)$residuals,
+    re_RC6=lm(data = mun_1, formula = poblacion ~ RC6)$residuals,
+    re_RC8=lm(data = mun_1, formula = poblacion ~ RC8)$residuals,
+    re_RC10=lm(data = mun_1, formula = poblacion ~ RC10)$residuals,
+    re_RC12=lm(data = mun_1, formula = poblacion ~ RC12)$residuals,
+    re_RC13=lm(data = mun_1, formula = poblacion ~ RC13)$residuals,
+    re_RC15=lm(data = mun_1, formula = poblacion ~ RC15)$residuals,
+    re_RC17=lm(data = mun_1, formula = poblacion ~ RC17)$residuals,
+    re_RC20=lm(data = mun_1, formula = poblacion ~ RC20)$residuals
+    ) %>%
   dplyr::select(everything(),-geometry,geometry)
-
 ```
 
-Esto añade a la base de datos espacial los errores de la regresión para poder operar con ellos.
+El código anterior añade a la base de datos espacial los errores de la regresión para poder operar con ellos.
 
 ### Cálculo del estadístico de asociación espacial
 
 Una vez que se tienen los errores de la regresión guardados como nuevas variables en la base de datos espacial, se computa el estadístico $I_i$ con dicha variable, usando la estructura espacial de tipo reina de orden 1. Para crear dicha estructura espacial se procede como:
 
-```{r}
+```{r warning=FALSE}
 #Definición de la estructura espacial
-q_1 <- rgeoda::queen_weights(sf::st_read("Bases de datos/shp__mun_R/mun_mex.shp"))
-
+q_1 <- rgeoda::queen_weights(mun_lm)
 ```
 
-Ahora, se estima cada uno de los coeficientes de asociación espacial local de Moran y se guardan en sus respectivos objetos:
+Ahora, se estima cada uno de los coeficientes de asociación espacial local de Moran y se guardan en sus respectivos objetos. El nivel de significancia para la selección de los municipios corresponde, como es usual, al 5%. Se procede como:
 
 ```{r}
 #Crea un objeto de tipo LISA con la estructura espacial definida que contiene el estatistico Ii
@@ -130,142 +126,120 @@ Icl20 <- local_moran(w=q_1, df=mun_lm["re_RC20"])
 
 ### Visualización de los complejos industriales: mapas de agrupamientos {.tabset}
 
-De acuerdo con el método, los municipios que integran los complejos industriales  de cada cadena productiva identificada son aquellos cuyo valor del indicador local de asociación espacial de Moran, $I_i$, es estadísticamente significativo al 5% y que además forman parte del agrupamiento Alto-Alto. Dichos municipios aparecen en los siguientes mapas de agrupamientos, junto con los municipios de las otras categorías. 
+De acuerdo con el método, los municipios que integran los complejos industriales  de cada cadena productiva identificada son aquellos cuyo valor del indicador local de asociación espacial de Moran, $I_i$, es estadísticamente significativo al 5% y que además forman parte del agrupamiento Alto-Alto. Dichos municipios aparecen en los siguientes mapas de agrupamientos, junto con los municipios de las otras categorías. Los mapas fueron construido a través de la función personalizada `mapa_funcion` que aparece en la documentación:
 
 #### Metal-mecánica
 
 ```{r}
-# mapa_funcion(mun,Icl3)
+mapa_funcion(mun_lm,Icl3)
 ```
 
 #### Química
 
 
 ```{r}
-# mapa_funcion(mun,Icl6)
+mapa_funcion(mun_lm,Icl6)
 ```
 
 #### Eléctrico-electrónica
 
 ```{r}
-# mapa_funcion(mun,Icl8)
+mapa_funcion(mun,Icl8)
 ```
 
 #### Textiles, confección y prendas de vestir
 
 ```{r}
-# mapa_funcion(mun,Icl10)
+mapa_funcion(mun,Icl10)
 ```
 
 #### Construcción
 
 ```{r}
-# mapa_funcion(mun,Icl12)
+mapa_funcion(mun,Icl12)
 ```
 
 #### Autotransportes
 
 ```{r}
-# mapa_funcion(mun,Icl13)
+mapa_funcion(mun,Icl13)
 ```
 
 #### Papel e impresión
 
 ```{r}
-# mapa_funcion(mun,Icl15)
+mapa_funcion(mun,Icl15)
 ```
 
 #### Plásticos y fibras sintéticas
 
 ```{r}
-# mapa_funcion(mun,Icl17)
+mapa_funcion(mun,Icl17)
 ```
 
 #### Muebles y productos de madera
 
 ```{r}
-# mapa_funcion(mun,Icl20)
+mapa_funcion(mun,Icl20)
 ```
 
 ### Visualización de los complejos industriales: Mapas de significancia {.tabset}
 
-Además, es usual presentar los resultados del mapa de agrupamientos junto con el llamado mapa de significancia, que muestra la signficancia individual de cada municipio en diferentes niveles:
-
-```{r eval=FALSE, include=FALSE}
-### Mapa de significancia
-#### Preliminares
-#### Extracción de los valores p asociados a cada observación
-lisa_p <- lisa_pvalues(Icl3)
-#### Definición de las etiquetas de cada grupo de valores p
-p_labels <- c("Not significant", "p <= 0.05", "p <= 0.01", "p <= 0.001")
-#### Definición de los colores de cada grupo de valores p
-p_colors <- c("#eeeeee", "#84f576", "#53c53c", "#348124")
-# Mapa de significancia: construcción
-plot(st_geometry(mun), 
-     col=sapply(lisa_p, function(x){
-       if (x <= 0.001) return(p_colors[4])
-       else if (x <= 0.01) return(p_colors[3])
-       else if (x <= 0.05) return (p_colors[2])
-       else return(p_colors[1])
-       }), 
-     border = "#333333", lwd=0.2)
-title(main = "Moran Local para la cadena metalmecánica")
-legend('bottomleft', legend = p_labels, fill = p_colors, border = "#eeeeee")
-```
+Además, es usual presentar los resultados del mapa de agrupamientos junto con el llamado mapa de significancia, que muestra la signficancia individual de cada municipio en diferentes niveles. Aquí lo hacemos a través de la función personalizada `mapa_sig` que aparece en la documentación:
 
 #### Metal-mecánica
 
 ```{r}
-# mapa_sig(mun,Icl3)
+mapa_sig(mun_lm,Icl3)
 ```
 
 #### Química
 
 
 ```{r}
-# mapa_sig(mun,Icl6)
+mapa_sig(mun,Icl6)
 ```
 
 #### Eléctrico-electrónica
 
 ```{r}
-# mapa_sig(mun,Icl8)
+mapa_sig(mun,Icl8)
 ```
 
 #### Textiles, confección y prendas de vestir
 
 ```{r}
-# mapa_sig(mun,Icl10)
+mapa_sig(mun,Icl10)
 ```
 
 #### Construcción
 
 ```{r}
-# mapa_sig(mun,Icl12)
+mapa_sig(mun,Icl12)
 ```
 
 #### Autotransportes
 
 ```{r}
-# mapa_sig(mun,Icl13)
+mapa_sig(mun,Icl13)
 ```
 
 #### Papel e impresión
 
 ```{r}
-# mapa_sig(mun,Icl15)
+mapa_sig(mun,Icl15)
 ```
 
 #### Plásticos y fibras sintéticas
 
 ```{r}
-# mapa_sig(mun,Icl17)
+mapa_sig(mun,Icl17)
 ```
 
 #### Muebles y productos de madera
 
 ```{r}
-# mapa_sig(mun,Icl20)
+mapa_sig(mun,Icl20)
 ```
 
 
@@ -283,4 +257,23 @@ La siguiente tabla resume los resultados del número de municipios para cada cad
 | Plásticos y fibras sintéticas.           	| 64                   	| 18                   	|
 | Muebles y productos de madera.           	| 59                   	| 14                   	|
 : Tabla 1. Complejos industriales industriales, 2013
+
+
+
+```{r eval=FALSE, include=FALSE}
+#Para guardar generar una base de datos en CSV que contenga: i) valor del LISA para cada cadena, ii) categorías de los clústeres y iii) valor p:
+
+cluster_mun <- data.frame(mun_lm,
+                          lisa_values(Icl3),lisa_clusters(Icl3),lisa_pvalues(Icl3),
+                          lisa_values(Icl6),lisa_clusters(Icl6),lisa_pvalues(Icl6),
+                          lisa_values(Icl8),lisa_clusters(Icl8),lisa_pvalues(Icl8),
+                          lisa_values(Icl10),lisa_clusters(Icl10),lisa_pvalues(Icl10),
+                          lisa_values(Icl12),lisa_clusters(Icl12),lisa_pvalues(Icl12),
+                          lisa_values(Icl13),lisa_clusters(Icl13),lisa_pvalues(Icl13),
+                          lisa_values(Icl15),lisa_clusters(Icl15),lisa_pvalues(Icl15),
+                          lisa_values(Icl17),lisa_clusters(Icl17),lisa_pvalues(Icl17),
+                          lisa_values(Icl20),lisa_clusters(Icl20),lisa_pvalues(Icl20))
+cluster_mun <- cluster_mun %>% select(-geometry)
+
+```
 

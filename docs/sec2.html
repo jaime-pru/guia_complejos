@@ -53,8 +53,8 @@
 
     <div class="d-flex align-items-start justify-content-between">
       <h1>
-        <a href="index.html" title="Una aplicación para México bajo la noción de complejo industrial">Técnicas de análisis regional para detectar clústeres industriales</a>:
-        <small class="text-muted">Una aplicación para México bajo la noción de complejo industrial</small>
+        <a href="index.html" title="Una aplicación para México bajo la noción de complejos industriales">Técnicas de análisis regional para detectar clústeres industriales</a>:
+        <small class="text-muted">Una aplicación para México bajo la noción de complejos industriales</small>
       </h1>
       <button class="btn btn-outline-primary d-lg-none ml-2 mt-1" type="button" data-toggle="collapse" data-target="#main-nav" aria-expanded="true" aria-controls="main-nav"><i class="fas fa-bars"></i><span class="sr-only">Show table of contents</span></button>
     </div>
@@ -109,331 +109,113 @@ A la letra, Feser y Bergman (2000: 5) explican de este modo los coeficientes ant
 <span class="header-section-number">2.2</span> Desarrollo del procedimiento<a class="anchor" aria-label="anchor" href="#desarrollo-del-procedimiento"><i class="fas fa-link"></i></a>
 </h2>
 <p>En esta sección se desarrolla el procedimiento anterior con información de la MIP de México para 2013 con información a nivel de rama de actividad, clasificada según el Sistema de Clasificación Industrial de América del Norte <span class="citation">(<a href="references.html#ref-INEGI2018scian" role="doc-biblioref">INEGI, 2018b</a>)</span>.</p>
-<p>Las librerías utilizadas y las funciones personalizadas son:</p>
+<p>Las librerías utilizadas y las funciones personalizadas aparecen y se cargan en seguida:</p>
+<p>La carga de la base de datos que contiene la MIP se hace con la siguiente línea de código. De libro llamado <code>mip_rama.xlsx</code> interesa la hoja <code>base_rama</code>:</p>
 <div class="sourceCode" id="cb1"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://readxl.tidyverse.org">readxl</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## ── Attaching packages ───────────────────── tidyverse 1.3.2 ──
-## ✔ ggplot2 3.4.0      ✔ purrr   1.0.0 
-## ✔ tibble  3.1.8      ✔ dplyr   1.0.10
-## ✔ tidyr   1.2.1      ✔ stringr 1.5.0 
-## ✔ readr   2.1.3      ✔ forcats 0.5.2 
-## ── Conflicts ──────────────────────── tidyverse_conflicts() ──
-## ✖ dplyr::filter() masks stats::filter()
-## ✖ dplyr::lag()    masks stats::lag()</code></pre>
-<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://ggplot2.tidyverse.org">ggplot2</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/taiyun/corrplot">corrplot</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## corrplot 0.92 loaded</code></pre>
-<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://personality-project.org/r/psych/">psych</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## 
-## Attaching package: 'psych'
-## 
-## The following objects are masked from 'package:ggplot2':
-## 
-##     %+%, alpha</code></pre>
-<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="http://haozhu233.github.io/kableExtra/">kableExtra</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## 
-## Attaching package: 'kableExtra'
-## 
-## The following object is masked from 'package:dplyr':
-## 
-##     group_rows</code></pre>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://r-spatial.github.io/sf/">sf</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Linking to GEOS 3.9.3, GDAL 3.5.2, PROJ 8.2.1; sf_use_s2() is TRUE</code></pre>
-<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://github.com/geodacenter/rgeoda/">rgeoda</a></span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Loading required package: digest</code></pre>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="kw"><a href="https://rdrr.io/r/base/library.html">library</a></span><span class="op">(</span><span class="va"><a href="https://tidyverse.tidyverse.org">tidyverse</a></span><span class="op">)</span></span>
-<span><span class="kw"><a href="https://rdrr.io/r/base/source.html">source</a></span><span class="op">(</span><span class="st">'Codigo/graficas.R'</span><span class="op">)</span></span></code></pre></div>
-<p>La carga de la base de datos:</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">mip_rama</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://readxl.tidyverse.org/reference/read_excel.html">read_excel</a></span><span class="op">(</span><span class="st">"Bases de datos/mip_rama.xlsx"</span>,</span>
+<code class="sourceCode R"><span><span class="va">mip_rama</span> <span class="op">&lt;-</span> <span class="fu">read_excel</span><span class="op">(</span><span class="st">"Bases de datos/mip_rama.xlsx"</span>,</span>
 <span>                    sheet <span class="op">=</span> <span class="st">"base_rama"</span><span class="op">)</span></span></code></pre></div>
-<p>La matriz a nivel rama cuenta con una dimensión de 263, 266, es decir, 263 filas y 266 columnas. De las columnas, se han excluido los elementos que corresponden a la demanda agregada (consumo privado, consumo de gobierno, formación bruta de capital fijo, exportaciones, importaciones y variación de existencias), aunque se han conservado el total de demanda intermedia (<code>di_tot</code>) y la utilización de la producción interna a precios básicos (<code>upipb</code>, que es la suma de la demanda intermedia y la demanda agregada). Además, el renglón final, <code>uetoni</code>, corresponde al usos de la economía total de origen nacional e importado (total de compras).</p>
+<p>Dentro del libro de Excel hay una hoja, <code>diccionario</code>, que contiene el significado de cada una de los campos de la base de datos recién cargada. La matriz a nivel rama cuenta con una dimensión de 263, 266, es decir, 263 filas y 266 columnas. En contraste con la MIP original proveniente del sitio de INEGI, la base aquí utilizada excluye los elementos que corresponden a la demanda agregada (consumo privado, consumo de gobierno, formación bruta de capital fijo, exportaciones, importaciones y variación de existencias), aunque se han conservado el total de demanda intermedia (<code>di_tot</code>) y la utilización de la producción interna a precios básicos (<code>upipb</code>, que es la suma de la demanda intermedia y la demanda agregada). Además, el renglón final, <code>uetoni</code>, corresponde a los usos de la economía total de origen nacional e importado (total de compras).</p>
 <p>Una vez cargada la información, se construirán las dos matrices que caracterizan los patrones de compras <span class="math inline">\(X:x_{ij};x_{ji}\)</span> y ventas <span class="math inline">\(Y:y_{ij}; y_{ji}\)</span>.</p>
 <p>La matriz con las proporciones de compras, <span class="math inline">\(X\)</span> se construye como:</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb2"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Crea un arreglo de datos que une dos elementos</span></span>
-<span><span class="va">X</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,<span class="co">#El primero es la selección de todas las filas de la matriz pero sólo las columnas 1 y 2</span></span>
-<span>               <span class="va">mip_rama</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="co">#El segundo es un cociente que divide cada elemento de la matriz, desde la columna 5 y en adelante entre el total de compras intermedias (`uetoni`), pero sólo a partir de la columna 5.</span></span>
+<span><span class="va">X</span><span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">1</span><span class="op">:</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,<span class="co">#El primero corresponde a las claves y nombres de las actividades (toas las filas, sólo las dos primeras columnas)</span></span>
+<span>               <span class="va">mip_rama</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">)</span><span class="op">]</span> <span class="op">/</span> <span class="fu"><a href="https://rdrr.io/r/base/vector.html">as.vector</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">nrow</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">5</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">)</span><span class="op">]</span><span class="op">)</span><span class="op">)</span> <span class="co">#El segundo corresponde al cálculo del primer par de coeficientes, un cociente que divide cada elemento de la matriz, desde la columna 5 y en adelante entre el total de compras intermedias (`uetoni`), pero sólo a partir de la columna 5.</span></span>
 <span></span>
-<span><span class="co">#Asigna los nombres de las columnas, que se han perdido en el paso anterior, a la matriz X</span></span>
-<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span><span class="op">]</span></span>
-<span><span class="co">#Elimina la última fila que tenía los totales de compras por rama</span></span>
-<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">X</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">cve_rama</span><span class="op">!=</span><span class="st">'uetoni'</span>,<span class="va">cve_rama</span><span class="op">!=</span><span class="st">"8141"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="st">"8141"</span><span class="op">)</span></span>
+<span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">[</span><span class="op">-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="fl">3</span>,<span class="fl">4</span><span class="op">)</span><span class="op">]</span> <span class="co">#Asigna los nombres de las columnas, que se han perdido en el paso anterior, a la matriz X</span></span>
 <span></span>
-<span><span class="va">X</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">]</span><span class="op">=</span><span class="fl">0</span> <span class="co"># Sustituir los NA con cero </span></span></code></pre></div>
+<span><span class="va">X</span> <span class="op">&lt;-</span> <span class="va">X</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">cve_rama</span><span class="op">!=</span><span class="st">'uetoni'</span>,<span class="va">cve_rama</span><span class="op">!=</span><span class="st">"8141"</span><span class="op">)</span> <span class="op">%&gt;%</span><span class="co">#Elimina la última fila que tenía los totales de compras por rama</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="st">"8141"</span><span class="op">)</span> <span class="co">#Elimina la fila que contiene los datos del sector 8141 pues eran todos cero</span></span>
+<span></span>
+<span><span class="va">X</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">X</span><span class="op">)</span><span class="op">]</span><span class="op">=</span><span class="fl">0</span> <span class="co"># Sustituye los NA con cero para el cálculo de los coeficientes de correlación más adelante </span></span></code></pre></div>
 <p>En tanto, la matriz que caracteriza los patrones de ventas, <span class="math inline">\(Y\)</span> se construye con:</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb3"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">u</span><span class="op">&lt;-</span><span class="va">mip_rama</span><span class="op">$</span><span class="va">di_tot</span> <span class="co">#Almacena el renglón de ventas totales, demanda intermedia</span></span>
-<span><span class="va">Y</span><span class="op">&lt;-</span><span class="va">mip_rama</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/mutate_all.html">mutate_at</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">]</span>,<span class="fu"><a href="https://dplyr.tidyverse.org/reference/funs.html">funs</a></span><span class="op">(</span><span class="op">(</span><span class="va">.</span><span class="op">/</span><span class="va">u</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="co">#Lleva a cabo la división requerida desde la columna 4 hasta el final, es decir, divide cada elemento de todas las filas entre el vector u </span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">upipb</span>,<span class="op">-</span><span class="va">di_tot</span>,<span class="op">-</span><span class="st">"8141"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="co"># Elimina las columnas de las variables indicadas</span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span><span class="op">(</span><span class="va">cve_rama</span><span class="op">!=</span><span class="st">'uetoni'</span>,<span class="va">cve_rama</span><span class="op">!=</span><span class="st">"8141"</span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Warning: `funs()` was deprecated in dplyr 0.8.0.
-## ℹ Please use a list of either functions or lambdas:
+<span><span class="va">Y</span><span class="op">&lt;-</span><span class="va">mip_rama</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">mutate_at</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/names.html">names</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">:</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">mip_rama</span><span class="op">)</span><span class="op">]</span>,<span class="fu">funs</span><span class="op">(</span><span class="op">(</span><span class="va">.</span><span class="op">/</span><span class="va">u</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># Construye los coeficientes de ventas, es decir, divide cada elemento de todas las filas entre el vector de ventas totales, u. </span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="op">-</span><span class="va">upipb</span>,<span class="op">-</span><span class="va">di_tot</span>,<span class="op">-</span><span class="st">"8141"</span><span class="op">)</span> <span class="op">%&gt;%</span> <span class="co"># Elimina las variables indicadas</span></span>
+<span>  <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">cve_rama</span><span class="op">!=</span><span class="st">'uetoni'</span>,<span class="va">cve_rama</span><span class="op">!=</span><span class="st">"8141"</span><span class="op">)</span><span class="co">#Elimina las columnas indicadas</span></span></code></pre></div>
+<pre><code>## Warning: `funs()` was deprecated in dplyr
+## 0.8.0.
+## ℹ Please use a list of either
+##   functions or lambdas:
 ## 
-## # Simple named list: list(mean = mean, median = median)
+## # Simple named list: list(mean =
+##   mean, median = median)
 ## 
-## # Auto named with `tibble::lst()`: tibble::lst(mean, median)
+## # Auto named with
+##   `tibble::lst()`:
+##   tibble::lst(mean, median)
 ## 
-## # Using lambdas list(~ mean(., trim = .2), ~ median(., na.rm
-##   = TRUE))</code></pre>
-<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
+## # Using lambdas list(~ mean(.,
+##   trim = .2), ~ median(., na.rm =
+##   TRUE))</code></pre>
+<div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Y</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/NA.html">is.na</a></span><span class="op">(</span><span class="va">Y</span><span class="op">)</span><span class="op">]</span><span class="op">=</span><span class="fl">0</span> <span class="co"># Sustituir los NA con cero</span></span></code></pre></div>
-<p>Una vez que ya se han calculado las dos matrices que describen los patrones de compras y ventas, el siguiente paso es llevar a cabo el análisis de correlación. No obstante, antes de ello, se presenta el resultado de las matrices para el caso de las 10 ramas de actividad más importantes en términos de su participación porcentual en el usos de la economía total de origen nacional e importado (<code>uetoni</code>). Dichas ramas son:</p>
-<ul>
-<li>4311 Comercio al por mayor de abarrotes y alimentos (7.9%)<br>
-</li>
-<li>3241 Fabricación de productos derivados del petróleo y del carbón (7.8%)<br>
-</li>
-<li>3363 Fabricación de partes para vehículos automotores (4.6%)<br>
-</li>
-<li>2111 Extracción de petróleo y gas (4.1%)</li>
-<li>5613 Servicios de empleo (3.9%)</li>
-<li>3251 Fabricación de productos químicos básicos (3.8%)<br>
-</li>
-<li>3344 Fabricación de componentes electrónicos (2.9%)<br>
-</li>
-<li>2211 Generación, transmisión y distribución de energía eléctrica (2.4%)</li>
-<li>5311 Alquiler sin intermediación de bienes raíces (2.2%)</li>
-<li>3261 Fabricación de productos de plástico (2.0%)</li>
-</ul>
-</div>
-<div id="análisis-estructura-compras" class="section level2 tabset" number="2.3">
-<h2>
-<span class="header-section-number">2.3</span> Análisis estructura compras<a class="anchor" aria-label="anchor" href="#an%C3%A1lisis-estructura-compras"><i class="fas fa-link"></i></a>
-</h2>
-<div id="section" class="section level3" number="2.3.1">
-<h3>
-<span class="header-section-number">2.3.1</span> 4311<a class="anchor" aria-label="anchor" href="#section"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_1111</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-6-1.png" width="672"></div>
-</div>
-<div id="section-1" class="section level3" number="2.3.2">
-<h3>
-<span class="header-section-number">2.3.2</span> 3241<a class="anchor" aria-label="anchor" href="#section-1"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb20"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_3241</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-7-1.png" width="672"></div>
-</div>
-<div id="section-2" class="section level3" number="2.3.3">
-<h3>
-<span class="header-section-number">2.3.3</span> 3363<a class="anchor" aria-label="anchor" href="#section-2"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_3363</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
-</div>
-<div id="section-3" class="section level3" number="2.3.4">
-<h3>
-<span class="header-section-number">2.3.4</span> 2111<a class="anchor" aria-label="anchor" href="#section-3"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_2111</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-9-1.png" width="672"></div>
-</div>
-<div id="section-4" class="section level3" number="2.3.5">
-<h3>
-<span class="header-section-number">2.3.5</span> 5613<a class="anchor" aria-label="anchor" href="#section-4"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_5613</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-10-1.png" width="672"></div>
-</div>
-<div id="section-5" class="section level3" number="2.3.6">
-<h3>
-<span class="header-section-number">2.3.6</span> 3251<a class="anchor" aria-label="anchor" href="#section-5"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_3251</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-11-1.png" width="672"></div>
-</div>
-<div id="section-6" class="section level3" number="2.3.7">
-<h3>
-<span class="header-section-number">2.3.7</span> 3344<a class="anchor" aria-label="anchor" href="#section-6"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_3344</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-12-1.png" width="672"></div>
-</div>
-<div id="section-7" class="section level3" number="2.3.8">
-<h3>
-<span class="header-section-number">2.3.8</span> 2211<a class="anchor" aria-label="anchor" href="#section-7"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_2211</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-13-1.png" width="672"></div>
-</div>
-<div id="section-8" class="section level3" number="2.3.9">
-<h3>
-<span class="header-section-number">2.3.9</span> 5311<a class="anchor" aria-label="anchor" href="#section-8"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb27"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_5311</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-14-1.png" width="672"></div>
-</div>
-<div id="section-9" class="section level3" number="2.3.10">
-<h3>
-<span class="header-section-number">2.3.10</span> 3261<a class="anchor" aria-label="anchor" href="#section-9"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">X</span>,<span class="va">sec_3261</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-15-1.png" width="672"></div>
-</div>
-</div>
-<div id="análisis-estructura-ventas" class="section level2 tabset" number="2.4">
-<h2>
-<span class="header-section-number">2.4</span> Análisis estructura ventas<a class="anchor" aria-label="anchor" href="#an%C3%A1lisis-estructura-ventas"><i class="fas fa-link"></i></a>
-</h2>
-<div id="section-10" class="section level3" number="2.4.1">
-<h3>
-<span class="header-section-number">2.4.1</span> 4311<a class="anchor" aria-label="anchor" href="#section-10"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_4311</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-16-1.png" width="672"></div>
-</div>
-<div id="section-11" class="section level3" number="2.4.2">
-<h3>
-<span class="header-section-number">2.4.2</span> 3241<a class="anchor" aria-label="anchor" href="#section-11"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_3241</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-17-1.png" width="672"></div>
-</div>
-<div id="section-12" class="section level3" number="2.4.3">
-<h3>
-<span class="header-section-number">2.4.3</span> 3363<a class="anchor" aria-label="anchor" href="#section-12"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_3363</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-18-1.png" width="672"></div>
-</div>
-<div id="section-13" class="section level3" number="2.4.4">
-<h3>
-<span class="header-section-number">2.4.4</span> 2111<a class="anchor" aria-label="anchor" href="#section-13"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_2111</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-19-1.png" width="672"></div>
-</div>
-<div id="section-14" class="section level3" number="2.4.5">
-<h3>
-<span class="header-section-number">2.4.5</span> 5613<a class="anchor" aria-label="anchor" href="#section-14"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_5613</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-20-1.png" width="672"></div>
-</div>
-<div id="section-15" class="section level3" number="2.4.6">
-<h3>
-<span class="header-section-number">2.4.6</span> 3251<a class="anchor" aria-label="anchor" href="#section-15"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_3251</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-21-1.png" width="672"></div>
-</div>
-<div id="section-16" class="section level3" number="2.4.7">
-<h3>
-<span class="header-section-number">2.4.7</span> 3344<a class="anchor" aria-label="anchor" href="#section-16"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_3344</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-22-1.png" width="672"></div>
-</div>
-<div id="section-17" class="section level3" number="2.4.8">
-<h3>
-<span class="header-section-number">2.4.8</span> 2211<a class="anchor" aria-label="anchor" href="#section-17"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_2211</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-23-1.png" width="672"></div>
-</div>
-<div id="section-18" class="section level3" number="2.4.9">
-<h3>
-<span class="header-section-number">2.4.9</span> 5311<a class="anchor" aria-label="anchor" href="#section-18"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_5311</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-24-1.png" width="672"></div>
-</div>
-<div id="section-19" class="section level3" number="2.4.10">
-<h3>
-<span class="header-section-number">2.4.10</span> 3261<a class="anchor" aria-label="anchor" href="#section-19"><i class="fas fa-link"></i></a>
-</h3>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu">grafica_barras</span><span class="op">(</span><span class="va">Y</span>,<span class="va">sec_3261</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-25-1.png" width="672"></div>
 <p>Ahora bien, con las matrices <span class="math inline">\(X\)</span> y <span class="math inline">\(Y\)</span> se lleva a cabo el análisis de correlación, del que se construyen cuatro matrices <span class="math inline">\(A=r(x_l\cdot x_m)\)</span>, <span class="math inline">\(B=r(y_l\cdot y_m)\)</span>, <span class="math inline">\(C=r(x_l\cdot y_m)\)</span> y <span class="math inline">\(D=r(y_l\cdot x_m)\)</span>, mismas que se muestran a continuación con un mapa de calor.</p>
 </div>
-</div>
-<div id="matrices-de-correlación" class="section level2 tabset" number="2.5">
+<div id="matrices-de-correlación" class="section level2 tabset" number="2.3">
 <h2>
-<span class="header-section-number">2.5</span> Matrices de correlación<a class="anchor" aria-label="anchor" href="#matrices-de-correlaci%C3%B3n"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.3</span> Matrices de correlación<a class="anchor" aria-label="anchor" href="#matrices-de-correlaci%C3%B3n"><i class="fas fa-link"></i></a>
 </h2>
-<div id="a" class="section level4" number="2.5.0.1">
+<div id="a" class="section level4" number="2.3.0.1">
 <h4>
-<span class="header-section-number">2.5.0.1</span> A<a class="anchor" aria-label="anchor" href="#a"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.3.0.1</span> A<a class="anchor" aria-label="anchor" href="#a"><i class="fas fa-link"></i></a>
 </h4>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<p>Matriz de correlación de <span class="math inline">\(X\)</span> con respecto a <span class="math inline">\(X\)</span>, es decir, <span class="math inline">\(r(x_l \cdot x_m)\)</span>:</p>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">XX</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span><span class="op">(</span><span class="va">XX</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-26-1.png" width="672"></div>
+<span><span class="fu">corrplot</span><span class="op">(</span><span class="va">XX</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-6-1.png" width="672"></div>
 </div>
-<div id="b" class="section level3" number="2.5.1">
+<div id="b" class="section level3" number="2.3.1">
 <h3>
-<span class="header-section-number">2.5.1</span> B<a class="anchor" aria-label="anchor" href="#b"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.3.1</span> B<a class="anchor" aria-label="anchor" href="#b"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<p>Matriz de correlación de <span class="math inline">\(Y\)</span> con respecto a <span class="math inline">\(Y\)</span>, es decir, <span class="math inline">\(r(y_l \cdot y_m)\)</span>:</p>
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">YY</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">Y</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span><span class="op">(</span><span class="va">YY</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-27-1.png" width="672"></div>
+<span><span class="fu">corrplot</span><span class="op">(</span><span class="va">YY</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-7-1.png" width="672"></div>
 </div>
-<div id="c" class="section level3" number="2.5.2">
+<div id="c" class="section level3" number="2.3.2">
 <h3>
-<span class="header-section-number">2.5.2</span> C<a class="anchor" aria-label="anchor" href="#c"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.3.2</span> C<a class="anchor" aria-label="anchor" href="#c"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<p>Matriz de correlación de <span class="math inline">\(X\)</span> con respecto a <span class="math inline">\(Y\)</span>, es decir, <span class="math inline">\(r(x_l \cdot y_m)\)</span>:</p>
+<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">XY</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">X</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,<span class="va">Y</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span><span class="op">(</span><span class="va">XY</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-28-1.png" width="672"></div>
+<span><span class="fu">corrplot</span><span class="op">(</span><span class="va">XY</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-8-1.png" width="672"></div>
 </div>
-<div id="d" class="section level3" number="2.5.3">
+<div id="d" class="section level3" number="2.3.3">
 <h3>
-<span class="header-section-number">2.5.3</span> D<a class="anchor" aria-label="anchor" href="#d"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.3.3</span> D<a class="anchor" aria-label="anchor" href="#d"><i class="fas fa-link"></i></a>
 </h3>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<p>Matriz de correlación de <span class="math inline">\(Y\)</span> con respecto a <span class="math inline">\(X\)</span>, es decir, <span class="math inline">\(r(y_l \cdot x_m)\)</span>:</p>
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">YX</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/stats/cor.html">cor</a></span><span class="op">(</span><span class="va">Y</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span>,<span class="va">X</span><span class="op">[</span>,<span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="op">-</span><span class="fl">1</span>,<span class="op">-</span><span class="fl">2</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span><span class="op">(</span><span class="va">YX</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-29-1.png" width="672"></div>
+<span><span class="fu">corrplot</span><span class="op">(</span><span class="va">YX</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-9-1.png" width="672"></div>
 </div>
 </div>
-<div id="max" class="section level2" number="2.6">
+<div id="max" class="section level2" number="2.4">
 <h2>
-<span class="header-section-number">2.6</span> Max<a class="anchor" aria-label="anchor" href="#max"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.4</span> Max<a class="anchor" aria-label="anchor" href="#max"><i class="fas fa-link"></i></a>
 </h2>
-<p>Finalmente, del juego de matrices anterior, se construye una nueva matriz en que cada elemento corresponde al valor máximo correspondiente en las matrices previas. Esta última matriz, con la cual se llevará a cabo el análisis por componentes principales, se muestra también en un mapa de calor.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<p>Finalmente, del juego de matrices de correlación anterior, se construye una nueva matriz, <span class="math inline">\(M\)</span> llamada aquí <code>max_rama</code>, en que cada elemento corresponde al valor máximo correspondiente en las matrices previas. Esta última matriz, con la cual se llevará a cabo el análisis por componentes principales, se muestra también en un mapa de calor.</p>
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">Q1</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">XX</span><span class="op">&gt;</span><span class="va">YY</span>,<span class="va">XX</span>,<span class="va">YY</span><span class="op">)</span></span>
 <span><span class="va">Q2</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Q1</span><span class="op">&gt;</span><span class="va">XY</span>,<span class="va">Q1</span>,<span class="va">XY</span><span class="op">)</span></span>
 <span><span class="va">Q3</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html">ifelse</a></span><span class="op">(</span><span class="va">Q2</span><span class="op">&gt;</span><span class="va">YX</span>,<span class="va">Q2</span>,<span class="va">YX</span><span class="op">)</span></span>
 <span><span class="va">max_rama</span><span class="op">&lt;-</span><span class="va">Q3</span></span>
-<span><span class="fu"><a href="https://rdrr.io/pkg/corrplot/man/corrplot.html">corrplot</a></span><span class="op">(</span><span class="va">max_rama</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-30-1.png" width="672"></div>
+<span><span class="fu">corrplot</span><span class="op">(</span><span class="va">max_rama</span>, method <span class="op">=</span> <span class="st">'color'</span>, type<span class="op">=</span><span class="st">'lower'</span>, tl.cex <span class="op">=</span> <span class="fl">0.5</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-10-1.png" width="672"></div>
 </div>
-<div id="análisis-por-componentes-principales" class="section level2" number="2.7">
+<div id="análisis-por-componentes-principales" class="section level2" number="2.5">
 <h2>
-<span class="header-section-number">2.7</span> Análisis por componentes principales<a class="anchor" aria-label="anchor" href="#an%C3%A1lisis-por-componentes-principales"><i class="fas fa-link"></i></a>
+<span class="header-section-number">2.5</span> Análisis por componentes principales<a class="anchor" aria-label="anchor" href="#an%C3%A1lisis-por-componentes-principales"><i class="fas fa-link"></i></a>
 </h2>
 <p>El procedimiento, de forma sintética, se puede dividir en:</p>
 <ol style="list-style-type: lower-roman">
@@ -444,10 +226,10 @@ A la letra, Feser y Bergman (2000: 5) explican de este modo los coeficientes ant
 </li>
 <li>Selección de las actividades que integran cada cadena con arreglo a los valores absolutos de las cargas.</li>
 </ol>
-<p>En R, el análisis por componentes principales se desarrolla con la función <code><a href="https://rdrr.io/r/stats/prcomp.html">prcomp()</a></code>. La matriz que será sometida a PCA está integrada por coeficientes de correlación. Se procede como:</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<p>En R, el análisis por componentes principales se desarrolla con la función <code><a href="https://rdrr.io/r/stats/prcomp.html">prcomp()</a></code>. La matriz <code>max_rama</code> o <span class="math inline">\(M\)</span> será sometida a PCA está integrada por coeficientes de correlación más altos previamente identificados. Se procede como:</p>
+<div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">PCAramaCS</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/prcomp.html">prcomp</a></span><span class="op">(</span><span class="va">max_rama</span>, center <span class="op">=</span> <span class="cn">T</span>, scale. <span class="op">=</span> <span class="cn">T</span><span class="op">)</span></span></code></pre></div>
-<p>El objeto que acaba de ser creado es de tipo <code>prcomp</code> y está integrado por los siguientes elementos: <code>sdev</code>, <code>rotation</code>, <code>center</code>, <code>scale</code>, <code>x</code>. <code>center</code> y <code>scale</code> corresponden a los valores centrados y escalados, respectivamente, de la variable original. En tanto, el resto:</p>
+<p>En el segmento de código anterior, se ha solicitado que los valores de la matriz sean centrados y escalados. El objeto que acaba de ser creado es de tipo <code>prcomp</code> y está integrado por los siguientes elementos: <code>sdev</code>, <code>rotation</code>, <code>center</code>, <code>scale</code>, <code>x</code>. Además, <code>center</code> y <code>scale</code> corresponden a los valores centrados y escalados, respectivamente, de la variable original. En tanto, el resto de los elementos:</p>
 <ol style="list-style-type: lower-roman">
 <li>
 <code>x</code>: contiene los componentes principales (las combinaciones lineales de las variables). Los valores de este elemento nos permitirán hacer una gráfica bidimencional (bi-plot) para tener una representación de todas las variables pero “sintetizadas” o “reducida en sus dimensiones”.<br>
@@ -459,31 +241,32 @@ A la letra, Feser y Bergman (2000: 5) explican de este modo los coeficientes ant
 <code>rotation</code>: almacena las cargas (<em>loading scores</em>). Hay una carga para cada componente principal y para cada observación. Las cargas sirven para determinar qué sectores tienen el efecto más grande sobre el agrupamiento o cadena identificada.</li>
 </ol>
 <p>Uno de los objetivos pues de la aplicación del PCA es la reducción de dimensiones: sintetizar la riqueza informativa de la base de datos (261 variables, es decir, interrelaciones entre sectores por sus patrones de compras y ventas) reducidos a determinado número de componentes. Una representación bidimiencional (con sólo dos variables, que explican a penas 40% de la variabilidad de la información) de nuestra base de datos original se hace con el bi-plot:</p>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">comp1</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">PCAramaCS</span><span class="op">[[</span><span class="st">"x"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">ramas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span><span class="op">(</span><span class="va">PCAramaCS</span><span class="op">[[</span><span class="st">"x"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span></span>
-<span><span class="va">comp1</span> <span class="op">&lt;-</span> <span class="va">comp1</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu"><a href="https://tibble.tidyverse.org/reference/add_column.html">add_column</a></span><span class="op">(</span><span class="va">ramas</span><span class="op">)</span></span>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">comp1</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html">as.data.frame</a></span><span class="op">(</span><span class="va">PCAramaCS</span><span class="op">[[</span><span class="st">"x"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co">#Extrae el primer componente que está almacenado en el objeto `x`</span></span>
+<span><span class="va">ramas</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span><span class="op">(</span><span class="va">PCAramaCS</span><span class="op">[[</span><span class="st">"x"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span> <span class="co">#Extrae el nombre de las filas. </span></span>
+<span><span class="va">comp1</span> <span class="op">&lt;-</span> <span class="va">comp1</span> <span class="op">%&gt;%</span> <span class="fu">add_column</span><span class="op">(</span><span class="va">ramas</span><span class="op">)</span> <span class="co">#Une los dos objetos previamente creados.</span></span>
 <span></span>
-<span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html">ggplot</a></span><span class="op">(</span><span class="va">comp1</span><span class="op">)</span><span class="op">+</span></span>
-<span>  <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_text.html">geom_text</a></span><span class="op">(</span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">PC1</span>,y<span class="op">=</span><span class="va">PC2</span><span class="op">)</span>,label<span class="op">=</span><span class="va">ramas</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-32-1.png" width="672"></div>
-<p>Los sectores más cercanos son sectores más parecidos entre sí y aparecen más cerca, aunque sólo captando 40% de la variabilidad de la información original. Como se dijo, <code>sdev</code> sirve como criterio para la elección del número de componentes que mejor describe la información, ya sea a partir de la magnitud del eigenvalor (la desviación estándar elevada al cuadrado) cuyas componentes serán seleccionadas para la reducción de dimensiones si dicho valor es mayor a la unidad. Esto lo podemos observar a partir de gráfica de sedimentación, de la que hay dos versiones: i) absoluta: graficar el eigenvalor (la desviación estándar elevada al cuadrado) ii) relativa: graficar la proporción de la varianza explicada.</p>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<span><span class="co"># Gráfico bi-plot</span></span>
+<span><span class="fu">ggplot</span><span class="op">(</span><span class="va">comp1</span><span class="op">)</span><span class="op">+</span></span>
+<span>  <span class="fu">geom_text</span><span class="op">(</span><span class="fu">aes</span><span class="op">(</span>x<span class="op">=</span><span class="va">PC1</span>,y<span class="op">=</span><span class="va">PC2</span><span class="op">)</span>,label<span class="op">=</span><span class="va">ramas</span><span class="op">)</span></span></code></pre></div>
+<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-12-1.png" width="672"></div>
+<p>Los sectores más cercanos son sectores más parecidos entre sí y aparecen más cerca, aquí representados con sus etiquetas de actividad, aunque sólo captando 40% de la variabilidad de la información original. Como se dijo, <code>sdev</code> sirve como criterio para la elección del número de componentes que mejor describe la información, ya sea a partir de la magnitud del eigenvalor (la desviación estándar elevada al cuadrado) cuyas componentes serán seleccionadas para la reducción de dimensiones si dicho valor es mayor a la unidad. Esto lo podemos observar a partir del gráfico de sedimentación, de la que hay dos versiones: i) absoluta: graficar el eigenvalor (la desviación estándar elevada al cuadrado) ii) relativa: graficar la proporción de la varianza explicada.</p>
+<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Versión con eigenvalores en términos absolutos</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">PCAramaCS</span><span class="op">$</span><span class="va">sdev</span><span class="op">^</span><span class="fl">2</span>, main<span class="op">=</span><span class="st">'Gráfico de sedimentación'</span>,</span>
 <span>     ylab<span class="op">=</span><span class="st">'Valor propio'</span>, xlab<span class="op">=</span><span class="st">'Componente principal'</span>,</span>
 <span>     type<span class="op">=</span><span class="st">'b'</span>, col<span class="op">=</span><span class="st">'royalblue4'</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/abline.html">abline</a></span><span class="op">(</span>h<span class="op">=</span><span class="fl">1</span>, lty<span class="op">=</span><span class="fl">2</span>, col<span class="op">=</span><span class="st">'red'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-33-1.png" width="672"></div>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-13-1.png" width="672"></div>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">#Versión de proporción de varianza explicada</span></span>
 <span><span class="va">pca.var</span> <span class="op">&lt;-</span> <span class="va">PCAramaCS</span><span class="op">$</span><span class="va">sdev</span><span class="op">^</span><span class="fl">2</span></span>
 <span><span class="va">pca.var.per</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/Round.html">round</a></span><span class="op">(</span><span class="va">pca.var</span><span class="op">/</span><span class="fu"><a href="https://rdrr.io/r/base/sum.html">sum</a></span><span class="op">(</span><span class="va">pca.var</span><span class="op">)</span><span class="op">*</span><span class="fl">100</span>, <span class="fl">1</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/graphics/plot.default.html">plot</a></span><span class="op">(</span><span class="va">pca.var.per</span>, main<span class="op">=</span><span class="st">'Gráfico de sedimentación'</span>,</span>
 <span>     ylab<span class="op">=</span><span class="st">'Porcentaje de variación'</span>, xlab<span class="op">=</span><span class="st">'Componente principal'</span>,</span>
 <span>     type<span class="op">=</span><span class="st">'b'</span><span class="op">)</span></span></code></pre></div>
-<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-33-2.png" width="672"></div>
-<p>En el caso de lo que buscamos aquí, es decir, la identificación de determinado número de actividades que entre sí integran una cadena de valor, la decisión del número de componentes, es decir, del número de cadenas productivas, es hecha con arreglo a los siguientes criterios (Feser y Bergman, 2000):</p>
+<div class="inline-figure"><img src="guia_complejos_files/figure-html/unnamed-chunk-13-2.png" width="672"></div>
+<p>En el caso de lo que buscamos aquí, es decir, la identificación de determinado número de actividades que entre sí integran una cadena productiva, la decisión del número de componentes, es decir, del número de cadenas productivas, es hecha con arreglo a los siguientes criterios (Feser y Bergman, 2000):</p>
 <ol style="list-style-type: lower-roman">
 <li>la proporción relativa de varianza que cada componente explica,<br>
 </li>
@@ -492,7 +275,7 @@ A la letra, Feser y Bergman (2000: 5) explican de este modo los coeficientes ant
 <li>los diagramas de sedimentación.</li>
 </ol>
 <p>Al solicitar un resumen del objeto que contiene los resultados del PCA se tiene que:</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/summary.html">summary</a></span><span class="op">(</span><span class="va">PCAramaCS</span><span class="op">)</span></span></code></pre></div>
 <pre><code>## Importance of components:
 ##                           PC1    PC2    PC3     PC4     PC5     PC6     PC7
@@ -652,50 +435,42 @@ A la letra, Feser y Bergman (2000: 5) explican de este modo los coeficientes ant
 ## Proportion of Variance 0.000e+00
 ## Cumulative Proportion  1.000e+00</code></pre>
 <p>De donde es posible observar qué número de componentes explican determinado porcentaje de varianza, de forma semejante al gráfico de sedimentación. Antes de la rotación, el número de componentes (agrupamientos) que se considera adecuado es 25, los que explican 92% de la varianza y en todos ellos el tamaño del eigenvalor es mayor a 1.</p>
-<p>Según lo indicado por Feser y Bergman (2000), la selección de las actividades que integran cada cadena productiva se hace observando las cargas dentro de cada agrupamiento, es decir, los valores absolutos del elemento <code>rotation</code>. De nuevo, Feser y Bergman (2000): “el conjunto generado de cargas (<em>loadings</em>) provee una medida de la fuerza relativa de los vínculos entre una industria dada y el factor derivado, en donde las industrias con las cargas más altas de un factor dado son tratadas como miembros de una cadena productiva” (p. 4). En la práctica es común en el análisis factorial considerar como significativas o dignas de interpretación sólo aquellas cargas que son más grandes que 0.5 (en términos absolutos). Para la selección de las actividades que integrarán cada cadena productiva, los autores que seguimos buscan hacer un balance de los siguientes objetivos (p. 4):</p>
+<p>Según lo indicado por Feser y Bergman (2000), la selección de las actividades que integran cada cadena productiva se hace observando las cargas dentro de cada agrupamiento, es decir, los valores absolutos del elemento <code>rotation</code>. De nuevo, Feser y Bergman (2000) dicen que “el conjunto generado de cargas (<em>loadings</em>) provee una medida de la fuerza relativa de los vínculos entre una industria dada y el factor derivado, en donde las industrias con las cargas más altas de un factor dado son tratadas como miembros de una cadena productiva” (p. 4). En la práctica es común en el análisis factorial considerar como significativas o dignas de interpretación sólo aquellas cargas que son más grandes que 0.5 (en términos absolutos). Para la selección de las actividades que integrarán cada cadena productiva, los autores que seguimos buscan hacer un balance de los siguientes objetivos (p. 4):</p>
 <ol style="list-style-type: decimal">
 <li>Identificar, mediante la magnitud de las cargas, los vínculos más estrechos de cada cluster, con independencia de si dicho sector está también vinculado estrechamente a otros cluster.</li>
 <li>Identificar, en la medida de lo posible, un conjunto de clusters mutuamente excluyentes, de modo que cada sector esté asignado a un solo cluster.</li>
 <li>Investigar los vínculos tanto entre clusteres como al interior de cada cluster.</li>
 </ol>
-<p>Así, respecto al objetivo 1, la elección de las actividades que integra cada cadena productiva es hecha a partir de la magnitud de la carga y los autores distinguen entre diferentes tipos de actividades: industrias primarias y secundarias. Las primarias son aquellas que, para una cadena, tienen un valor de la carga igual o mayor a 0.6, en tanto, una actividad secundaria es aquella que tiene una carga entre 0.35 y 0.6.</p>
-<p>No obstante, eso hay que hacerlo después de la rotación varimax. La librería <code>psych</code> permite seleccionar el método de rotación desde el cálculo de los componentes, a través de la función <code><a href="https://rdrr.io/pkg/psych/man/principal.html">principal()</a></code>. El siguiente segmento de código lleva a cabo el cálculo de los componentes principales rotados con varimax, donde se ha especificado que se desean 25 componentes, luego guarda las cargas en un <code>dataframe</code> para su análisis.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">PCAramaVM</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/psych/man/principal.html">principal</a></span><span class="op">(</span>r<span class="op">=</span><span class="va">max_rama</span>,nfactors <span class="op">=</span> <span class="fl">25</span>,rotate <span class="op">=</span> <span class="st">"varimax"</span><span class="op">)</span></span></code></pre></div>
-<pre><code>## Pearson correlations of the raw data were found</code></pre>
-<pre><code>## Warning in cor.smooth(model): Matrix was not positive definite, smoothing was
-## done</code></pre>
-<pre><code>## Warning in cor.smooth(r): Matrix was not positive definite, smoothing was done</code></pre>
-<pre><code>## Warning in log(det(m.inv.r)): Se han producido NaNs</code></pre>
-<pre><code>## The determinant of the smoothed correlation was zero.
-## This means the objective function is not defined for the null model either.
-## The Chi square is thus based upon observed correlations.</code></pre>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">cargasPCA</span> <span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">cbind</a></span><span class="op">(</span>nom_rama<span class="op">=</span><span class="va">X</span><span class="op">$</span><span class="va">nom_rama</span>,<span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span>rama<span class="op">=</span><span class="fu"><a href="https://rdrr.io/r/base/row.names.html">row.names</a></span><span class="op">(</span><span class="va">max_rama</span><span class="op">)</span>,<span class="fu"><a href="https://rdrr.io/r/base/class.html">unclass</a></span><span class="op">(</span><span class="va">PCAramaVM</span><span class="op">$</span><span class="va">loadings</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p>De los 25 componentes (cadenas productivas) obtenidas, 9 de ellas corresponden a actividades industriales, por ello, se seleccionan las de interés a través del siguiente segmento de código:</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">clusters</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'RC3'</span>,<span class="st">'RC6'</span>,<span class="st">'RC8'</span>,<span class="st">'RC10'</span>,<span class="st">'RC12'</span>,<span class="st">'RC13'</span>,<span class="st">'RC15'</span>,<span class="st">'RC17'</span>,<span class="st">'RC20'</span><span class="op">)</span></span>
+<p>Así, respecto al objetivo 1, la elección de las actividades que integra cada cadena productiva es hecha a partir de la magnitud de la carga y los autores distinguen entre diferentes tipos de actividades: industrias primarias y secundarias. Las primarias son aquellas que, para una cadena, tienen un valor de la carga mayor o igual a 0.6, en tanto, una actividad secundaria es aquella que tiene una carga entre 0.35 y 0.6.</p>
+<p>No obstante, eso hay que hacerlo después de la rotación <em>varimax</em>. La librería <code>psych</code> permite seleccionar el método de rotación desde el cálculo de los componentes, a través de la función <code>principal()</code>. El siguiente segmento de código lleva a cabo el cálculo de los componentes principales rotados con varimax, donde se ha especificado que se desean 25 componentes, luego guarda las cargas en un <code>dataframe</code> para su análisis.</p>
+<p>La selección de las cadenas productivas industriales fue hecha a partir de la observación de las actividades económicas listadas en cada uno de los 25 componentes, ordenando las cargas de mayor a menor, buscando dónde los códigos de “industria” estaban más presentes, es decir, de las actividades 21 (minería), 22 (electricidad, agua y gas), 23 (costrucción) y 31-33 (manufactura). De los 25 componentes (cadenas productivas) obtenidas, 9 de ellas corresponden a actividades industriales: los componentes 3, 6, 8, 10, 12, 13, 15, 17 y 20.</p>
+<p>El siguiente segmento de código selecciona dichos componentes y los almacena en el objeto <code>clusters</code>:</p>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">clusters</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/c.html">c</a></span><span class="op">(</span><span class="st">'RC3'</span>,<span class="st">'RC6'</span>,<span class="st">'RC8'</span>,<span class="st">'RC10'</span>,<span class="st">'RC12'</span>,<span class="st">'RC13'</span>,<span class="st">'RC15'</span>,<span class="st">'RC17'</span>,<span class="st">'RC20'</span><span class="op">)</span> <span class="co"># Selección de los componentes asociados a la industria</span></span>
 <span></span>
-<span><span class="va">ramas_ci</span><span class="op">&lt;-</span><span class="va">cargasPCA</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
+<span><span class="va">ramas_ci</span><span class="op">&lt;-</span><span class="va">cargasPCA</span> <span class="op">%&gt;%</span> <span class="co">#Ordena los componentes</span></span>
 <span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">nom_rama</span>,<span class="va">rama</span>,<span class="va">RC3</span>,<span class="va">RC6</span>,<span class="va">RC8</span>,<span class="va">RC10</span>,<span class="va">RC12</span>,<span class="va">RC13</span>,<span class="va">RC15</span>,<span class="va">RC17</span>,<span class="va">RC20</span> <span class="op">)</span></span></code></pre></div>
-<p>Luego, esta información se apila para identificar más fácilmente las cargas y discriminar entre actividades que aparecen en varias cadenas simultáneamente:</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<p>Una vez identificados los componentes que corresponden a cadenas industriales, hay que discriminar entre aquellas actividades que efectivamente integran dicha cadena con arreglo a los valores de sus cargas. Recordemos: actividades con cargas mayores a 0.35 formarán parte de la cadena productiva, además, una actividad deberá sólo pertenecer a una cadena, por lo que permanecerá en aquella en que tenga la carga más alta y será excluida de las otras en que aparezca.</p>
+<p>Para facilitar esta selección, la información se apila con el siguiente segmento de código:</p>
+<div class="sourceCode" id="cb18"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">nc</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/nrow.html">ncol</a></span><span class="op">(</span><span class="va">ramas_ci</span><span class="op">)</span><span class="op">-</span><span class="fl">2</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/rm.html">remove</a></span><span class="op">(</span><span class="va">ramas_ci_row</span>,<span class="va">cuadro</span><span class="op">)</span></span></code></pre></div>
 <pre><code>## Warning in remove(ramas_ci_row, cuadro): objeto 'ramas_ci_row' no encontrado</code></pre>
 <pre><code>## Warning in remove(ramas_ci_row, cuadro): objeto 'cuadro' no encontrado</code></pre>
-<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">ramas_ci_row</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/data.frame.html">data.frame</a></span><span class="op">(</span><span class="op">)</span></span>
 <span></span>
 <span><span class="kw">for</span> <span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fl">1</span><span class="op">:</span><span class="va">nc</span><span class="op">)</span><span class="op">{</span></span>
 <span>  <span class="va">n</span><span class="op">&lt;-</span><span class="va">i</span><span class="op">+</span><span class="fl">2</span></span>
-<span>  <span class="va">selecion</span><span class="op">&lt;-</span> <span class="va">ramas_ci</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="va">n</span><span class="op">)</span></span>
+<span>  <span class="va">selecion</span><span class="op">&lt;-</span> <span class="va">ramas_ci</span> <span class="op">%&gt;%</span> <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="fl">1</span>,<span class="fl">2</span>,<span class="va">n</span><span class="op">)</span></span>
 <span>  <span class="va">cuadro</span><span class="op">&lt;-</span><span class="fu">custom_filtro</span><span class="op">(</span><span class="va">selecion</span><span class="op">)</span></span>
 <span>  <span class="va">ramas_ci_row</span><span class="op">&lt;-</span><span class="fu"><a href="https://rdrr.io/r/base/cbind.html">rbind</a></span><span class="op">(</span><span class="va">ramas_ci_row</span>,<span class="va">cuadro</span><span class="op">)</span></span>
 <span>    <span class="op">}</span></span></code></pre></div>
-<pre><code>## Warning: Using an external vector in selections was deprecated in
+<pre><code>## Warning: Using an external vector in
+## selections was deprecated in
 ## tidyselect 1.1.0.
-## ℹ Please use `all_of()` or `any_of()` instead.
+## ℹ Please use `all_of()` or
+##   `any_of()` instead.
 ##   # Was:
 ##   data %&gt;% select(n)
 ## 
@@ -704,12 +479,12 @@ A la letra, Feser y Bergman (2000: 5) explican de este modo los coeficientes ant
 ## 
 ## See
 ## &lt;https://tidyselect.r-lib.org/reference/faq-external-vector.html&gt;.</code></pre>
-<p>Las actividades que aparecen en más de una cadena aparecen con una cuenta mayor que uno en la siguiente tabla:</p>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Cuenta</span><span class="op">&lt;-</span> <span class="va">ramas_ci_row</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">rama</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span>x<span class="op">=</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">Cuenta</span></span></code></pre></div>
+<p>Una vez que la información de las 9 cadenas industriales ha sido apilada, hay que identificar las actividades que aparecen en más de una cadena. Eso se hace con:</p>
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Cuenta</span><span class="op">&lt;-</span> <span class="va">ramas_ci_row</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">count</span><span class="op">(</span><span class="va">rama</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span>x<span class="op">=</span><span class="fu">desc</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">Cuenta</span> <span class="op">%&gt;%</span> <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span><span class="op">(</span><span class="va">n</span><span class="op">&gt;</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <pre><code>##    rama n
 ## 1  8113 3
 ## 2  2361 2
@@ -728,102 +503,46 @@ A la letra, Feser y Bergman (2000: 5) explican de este modo los coeficientes ant
 ## 15 3362 2
 ## 16 3363 2
 ## 17 3366 2
-## 18 3372 2
-## 19 2111 1
-## 20 2371 1
-## 21 2372 1
-## 22 2373 1
-## 23 2379 1
-## 24 2381 1
-## 25 2389 1
-## 26 3121 1
-## 27 3131 1
-## 28 3141 1
-## 29 3149 1
-## 30 3151 1
-## 31 3152 1
-## 32 3159 1
-## 33 3169 1
-## 34 3212 1
-## 35 3219 1
-## 36 3221 1
-## 37 3222 1
-## 38 3231 1
-## 39 3251 1
-## 40 3252 1
-## 41 3253 1
-## 42 3254 1
-## 43 3256 1
-## 44 3259 1
-## 45 3261 1
-## 46 3262 1
-## 47 3271 1
-## 48 3272 1
-## 49 3273 1
-## 50 3279 1
-## 51 3311 1
-## 52 3312 1
-## 53 3313 1
-## 54 3315 1
-## 55 3321 1
-## 56 3322 1
-## 57 3325 1
-## 58 3326 1
-## 59 3327 1
-## 60 3328 1
-## 61 3329 1
-## 62 3333 1
-## 63 3334 1
-## 64 3341 1
-## 65 3342 1
-## 66 3343 1
-## 67 3344 1
-## 68 3345 1
-## 69 3346 1
-## 70 3352 1
-## 71 3353 1
-## 72 3361 1
-## 73 3365 1
-## 74 3369 1
-## 75 3371 1
-## 76 3379 1
-## 77 3399 1
-## 78 4885 1
-## 79 4889 1
-## 80 5171 1
-## 81 5172 1
-## 82 5321 1
-## 83 5613 1
-## 84 5615 1
-## 85 5619 1
-## 86 5621 1
-## 87 8111 1
-## 88 8112 1
-## 89 8114 1
-## 90 8129 1</code></pre>
-<p>Dichas actividades duplicadas se asignan a la cadena donde tienen la mayor carga:</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">ramas_ci_final</span><span class="op">&lt;-</span><span class="va">ramas_ci_row</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span> <span class="op">(</span><span class="va">rama</span><span class="op">)</span><span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>   <span class="fu"><a href="https://dplyr.tidyverse.org/reference/filter.html">filter</a></span> <span class="op">(</span><span class="va">Carga</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span> <span class="op">(</span><span class="va">Carga</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span><span class="op">)</span></span></code></pre></div>
+## 18 3372 2</code></pre>
+<p>Entonces, como se dijo, la actividad será asignada a la cadena donde tenga la mayor carga. Lo que se logra con:</p>
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">ramas_ci_final</span><span class="op">&lt;-</span><span class="va">ramas_ci_row</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">group_by</span> <span class="op">(</span><span class="va">rama</span><span class="op">)</span><span class="op">%&gt;%</span></span>
+<span>   <span class="fu"><a href="https://rdrr.io/r/stats/filter.html">filter</a></span> <span class="op">(</span><span class="va">Carga</span> <span class="op">==</span> <span class="fu"><a href="https://rdrr.io/r/base/Extremes.html">max</a></span> <span class="op">(</span><span class="va">Carga</span>, na.rm <span class="op">=</span> <span class="cn">TRUE</span> <span class="op">)</span><span class="op">)</span></span></code></pre></div>
 <p>Ahora, sólo queda una actividad por cadena, como se indica en los criterios dados por Feser y Bergman (2000)</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Cuenta2</span><span class="op">&lt;-</span> <span class="va">ramas_ci_final</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span> </span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/count.html">count</a></span><span class="op">(</span><span class="va">rama</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/desc.html">desc</a></span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Cuenta2</span><span class="op">&lt;-</span> <span class="va">ramas_ci_final</span> <span class="op">%&gt;%</span> </span>
+<span>  <span class="fu">count</span><span class="op">(</span><span class="va">rama</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">arrange</span><span class="op">(</span><span class="fu">desc</span><span class="op">(</span><span class="va">n</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">Cuenta2</span></span></code></pre></div>
+<pre><code>## # A tibble: 90 × 2
+## # Groups:   rama [90]
+##    rama      n
+##    &lt;chr&gt; &lt;int&gt;
+##  1 2111      1
+##  2 2361      1
+##  3 2362      1
+##  4 2371      1
+##  5 2372      1
+##  6 2373      1
+##  7 2379      1
+##  8 2381      1
+##  9 2389      1
+## 10 3121      1
+## # … with 80 more rows</code></pre>
 <p>El conjunto de ramas vinculadas a cada una de las nueve cadenas obtenidas se muestra en el siguiente cuadro:</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">Cuadro_cruster</span><span class="op">&lt;-</span><span class="va">ramas_ci_final</span>  <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cluster</span>,<span class="va">rama</span><span class="op">)</span><span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/group_by.html">group_by</a></span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://dplyr.tidyverse.org/reference/summarise.html">summarise</a></span><span class="op">(</span>ramas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">rama</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span><span class="op">)</span></span>
-<span><span class="va">Cuadro_cruster</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>    <span class="fu"><a href="https://dplyr.tidyverse.org/reference/arrange.html">arrange</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cluster</span>, levels <span class="op">=</span> <span class="va">clusters</span><span class="op">)</span><span class="op">)</span><span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kbl.html">kbl</a></span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Ramas más fuertemente vinculadas"</span><span class="op">)</span> <span class="op"><a href="https://magrittr.tidyverse.org/reference/pipe.html">%&gt;%</a></span></span>
-<span>  <span class="fu"><a href="https://rdrr.io/pkg/kableExtra/man/kable_styling.html">kable_styling</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">Cuadro_cluster</span><span class="op">&lt;-</span><span class="va">ramas_ci_final</span>  <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">dplyr</span><span class="fu">::</span><span class="fu"><a href="https://dplyr.tidyverse.org/reference/select.html">select</a></span><span class="op">(</span><span class="va">cluster</span>,<span class="va">rama</span><span class="op">)</span><span class="op">%&gt;%</span></span>
+<span>  <span class="fu">group_by</span><span class="op">(</span><span class="va">cluster</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">summarise</span><span class="op">(</span>ramas <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html">paste</a></span><span class="op">(</span><span class="va">rama</span>, collapse <span class="op">=</span> <span class="st">", "</span><span class="op">)</span><span class="op">)</span></span>
+<span><span class="va">Cuadro_cluster</span> <span class="op">%&gt;%</span></span>
+<span>    <span class="fu">arrange</span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/factor.html">factor</a></span><span class="op">(</span><span class="va">cluster</span>, levels <span class="op">=</span> <span class="va">clusters</span><span class="op">)</span><span class="op">)</span><span class="op">%&gt;%</span></span>
+<span>  <span class="fu">kbl</span><span class="op">(</span>caption <span class="op">=</span> <span class="st">"Ramas más fuertemente vinculadas"</span><span class="op">)</span> <span class="op">%&gt;%</span></span>
+<span>  <span class="fu">kable_styling</span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
 <div class="inline-table"><table class="table" style="margin-left: auto; margin-right: auto;">
 <caption>
-<span id="tab:unnamed-chunk-41">Table 2.1: </span>Ramas más fuertemente vinculadas
+<span id="tab:unnamed-chunk-21">Table 2.1: </span>Ramas más fuertemente vinculadas
 </caption>
 <thead><tr>
 <th style="text-align:left;">
@@ -908,6 +627,8 @@ RC20
 </tr>
 </tbody>
 </table></div>
+<p>Ahora bien, una vez identificadas las actividades pertenecientes a cada cadena, se procede a su espacialización a través del cálculo de indicadores locales de asociación espacial, como se muestra en la siguiente sección.</p>
+
 </div>
 </div>
   <div class="chapter-nav">
@@ -920,42 +641,14 @@ RC20
 <li><a class="nav-link" href="#breve-exposici%C3%B3n-del-m%C3%A9todo"><span class="header-section-number">2.1</span> Breve exposición del método</a></li>
 <li><a class="nav-link" href="#desarrollo-del-procedimiento"><span class="header-section-number">2.2</span> Desarrollo del procedimiento</a></li>
 <li>
-<a class="nav-link" href="#an%C3%A1lisis-estructura-compras"><span class="header-section-number">2.3</span> Análisis estructura compras</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#section"><span class="header-section-number">2.3.1</span> 4311</a></li>
-<li><a class="nav-link" href="#section-1"><span class="header-section-number">2.3.2</span> 3241</a></li>
-<li><a class="nav-link" href="#section-2"><span class="header-section-number">2.3.3</span> 3363</a></li>
-<li><a class="nav-link" href="#section-3"><span class="header-section-number">2.3.4</span> 2111</a></li>
-<li><a class="nav-link" href="#section-4"><span class="header-section-number">2.3.5</span> 5613</a></li>
-<li><a class="nav-link" href="#section-5"><span class="header-section-number">2.3.6</span> 3251</a></li>
-<li><a class="nav-link" href="#section-6"><span class="header-section-number">2.3.7</span> 3344</a></li>
-<li><a class="nav-link" href="#section-7"><span class="header-section-number">2.3.8</span> 2211</a></li>
-<li><a class="nav-link" href="#section-8"><span class="header-section-number">2.3.9</span> 5311</a></li>
-<li><a class="nav-link" href="#section-9"><span class="header-section-number">2.3.10</span> 3261</a></li>
+<a class="nav-link" href="#matrices-de-correlaci%C3%B3n"><span class="header-section-number">2.3</span> Matrices de correlación</a><ul class="nav navbar-nav">
+<li><a class="nav-link" href="#b"><span class="header-section-number">2.3.1</span> B</a></li>
+<li><a class="nav-link" href="#c"><span class="header-section-number">2.3.2</span> C</a></li>
+<li><a class="nav-link" href="#d"><span class="header-section-number">2.3.3</span> D</a></li>
 </ul>
 </li>
-<li>
-<a class="nav-link" href="#an%C3%A1lisis-estructura-ventas"><span class="header-section-number">2.4</span> Análisis estructura ventas</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#section-10"><span class="header-section-number">2.4.1</span> 4311</a></li>
-<li><a class="nav-link" href="#section-11"><span class="header-section-number">2.4.2</span> 3241</a></li>
-<li><a class="nav-link" href="#section-12"><span class="header-section-number">2.4.3</span> 3363</a></li>
-<li><a class="nav-link" href="#section-13"><span class="header-section-number">2.4.4</span> 2111</a></li>
-<li><a class="nav-link" href="#section-14"><span class="header-section-number">2.4.5</span> 5613</a></li>
-<li><a class="nav-link" href="#section-15"><span class="header-section-number">2.4.6</span> 3251</a></li>
-<li><a class="nav-link" href="#section-16"><span class="header-section-number">2.4.7</span> 3344</a></li>
-<li><a class="nav-link" href="#section-17"><span class="header-section-number">2.4.8</span> 2211</a></li>
-<li><a class="nav-link" href="#section-18"><span class="header-section-number">2.4.9</span> 5311</a></li>
-<li><a class="nav-link" href="#section-19"><span class="header-section-number">2.4.10</span> 3261</a></li>
-</ul>
-</li>
-<li>
-<a class="nav-link" href="#matrices-de-correlaci%C3%B3n"><span class="header-section-number">2.5</span> Matrices de correlación</a><ul class="nav navbar-nav">
-<li><a class="nav-link" href="#b"><span class="header-section-number">2.5.1</span> B</a></li>
-<li><a class="nav-link" href="#c"><span class="header-section-number">2.5.2</span> C</a></li>
-<li><a class="nav-link" href="#d"><span class="header-section-number">2.5.3</span> D</a></li>
-</ul>
-</li>
-<li><a class="nav-link" href="#max"><span class="header-section-number">2.6</span> Max</a></li>
-<li><a class="nav-link" href="#an%C3%A1lisis-por-componentes-principales"><span class="header-section-number">2.7</span> Análisis por componentes principales</a></li>
+<li><a class="nav-link" href="#max"><span class="header-section-number">2.4</span> Max</a></li>
+<li><a class="nav-link" href="#an%C3%A1lisis-por-componentes-principales"><span class="header-section-number">2.5</span> Análisis por componentes principales</a></li>
 </ul>
 
       <div class="book-extra">
@@ -972,7 +665,7 @@ RC20
 <footer class="bg-primary text-light mt-5"><div class="container"><div class="row">
 
   <div class="col-12 col-md-6 mt-3">
-    <p>"<strong>Técnicas de análisis regional para detectar clústeres industriales</strong>: Una aplicación para México bajo la noción de complejo industrial" was written by Jaime Prudencio. It was last built on Marzo de 2023.</p>
+    <p>"<strong>Técnicas de análisis regional para detectar clústeres industriales</strong>: Una aplicación para México bajo la noción de complejos industriales" was written by Jaime Prudencio. It was last built on Marzo de 2023.</p>
   </div>
 
   <div class="col-12 col-md-6 mt-3">

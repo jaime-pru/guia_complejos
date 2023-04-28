@@ -1,6 +1,6 @@
 --- 
 title: "Técnicas de análisis regional para detectar clústeres industriales"
-subtitle: "Una aplicación para México bajo la noción de complejo industrial"
+subtitle: "Una aplicación para México bajo la noción de complejos industriales"
 author: "Jaime Prudencio"
 date: "Marzo de 2023"
 site: bookdown::bookdown_site

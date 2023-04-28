@@ -36,9 +36,9 @@ Posteriormente, con las cuatro matrices obtenidas,se construye otra que contiene
 
 En esta sección se desarrolla el procedimiento anterior con información de la MIP de México para 2013 con información a nivel de rama de actividad, clasificada según el Sistema de Clasificación Industrial de América del Norte [@INEGI2018scian].
 
-Las librerías utilizadas y las funciones personalizadas son: 
+Las librerías utilizadas y las funciones personalizadas aparecen y se cargan en seguida:
 
-```{r}
+```{r message=FALSE, warning=FALSE, include=FALSE}
 library(readxl)
 library(tidyverse)
 library(ggplot2)
@@ -51,31 +51,30 @@ library(tidyverse)
 source('Codigo/graficas.R')
 ```
 
-La carga de la base de datos:
+La carga de la base de datos que contiene la MIP se hace con la siguiente línea de código. De libro llamado `mip_rama.xlsx` interesa la hoja `base_rama`:
 
 ```{r}
 mip_rama <- read_excel("Bases de datos/mip_rama.xlsx",
                     sheet = "base_rama")
 ```
 
-La matriz a nivel rama cuenta con una dimensión de `r dim(mip_rama)`, es decir, 263 filas y 266 columnas. De las columnas, se han excluido los elementos que corresponden a la demanda agregada (consumo privado, consumo de gobierno, formación bruta de capital fijo, exportaciones, importaciones y variación de existencias), aunque se han conservado el total de demanda intermedia (`di_tot`) y la utilización de la producción interna a precios básicos (`upipb`, que es la suma de la demanda intermedia y la demanda agregada). Además, el renglón final, `uetoni`, corresponde al usos de la economía total de origen nacional e importado (total de compras).
+Dentro del libro de Excel hay una hoja, `diccionario`, que contiene el significado de cada una de los campos de la base de datos recién cargada. La matriz a nivel rama cuenta con una dimensión de `r dim(mip_rama)`, es decir, 263 filas y 266 columnas. En contraste con la MIP original proveniente del sitio de INEGI, la base aquí utilizada excluye los elementos que corresponden a la demanda agregada (consumo privado, consumo de gobierno, formación bruta de capital fijo, exportaciones, importaciones y variación de existencias), aunque se han conservado el total de demanda intermedia (`di_tot`) y la utilización de la producción interna a precios básicos (`upipb`, que es la suma de la demanda intermedia y la demanda agregada). Además, el renglón final, `uetoni`, corresponde a los usos de la economía total de origen nacional e importado (total de compras).
 
 Una vez cargada la información, se construirán las dos matrices que caracterizan los patrones de compras $X:x_{ij};x_{ji}$ y ventas $Y:y_{ij}; y_{ji}$. 
 
 La matriz con las proporciones de compras, $X$ se construye como:
 ```{r}
-
 #Crea un arreglo de datos que une dos elementos
-X<- data.frame(mip_rama[,c(1:2)],#El primero es la selección de todas las filas de la matriz pero sólo las columnas 1 y 2
-               mip_rama[,c(5:ncol(mip_rama))] / as.vector(mip_rama[nrow(mip_rama),c(5:ncol(mip_rama))])) #El segundo es un cociente que divide cada elemento de la matriz, desde la columna 5 y en adelante entre el total de compras intermedias (`uetoni`), pero sólo a partir de la columna 5.
+X<- data.frame(mip_rama[,c(1:2)],#El primero corresponde a las claves y nombres de las actividades (toas las filas, sólo las dos primeras columnas)
+               mip_rama[,c(5:ncol(mip_rama))] / as.vector(mip_rama[nrow(mip_rama),c(5:ncol(mip_rama))])) #El segundo corresponde al cálculo del primer par de coeficientes, un cociente que divide cada elemento de la matriz, desde la columna 5 y en adelante entre el total de compras intermedias (`uetoni`), pero sólo a partir de la columna 5.
 
-#Asigna los nombres de las columnas, que se han perdido en el paso anterior, a la matriz X
-names(X)<-names(mip_rama)[-c(3,4)]
-#Elimina la última fila que tenía los totales de compras por rama
-X <- X %>% filter(cve_rama!='uetoni',cve_rama!="8141") %>%
-  dplyr::select(-"8141")
+names(X)<-names(mip_rama)[-c(3,4)] #Asigna los nombres de las columnas, que se han perdido en el paso anterior, a la matriz X
 
-X[is.na(X)]=0 # Sustituir los NA con cero 
+X <- X %>% 
+  filter(cve_rama!='uetoni',cve_rama!="8141") %>%#Elimina la última fila que tenía los totales de compras por rama
+  dplyr::select(-"8141") #Elimina la fila que contiene los datos del sector 8141 pues eran todos cero
+
+X[is.na(X)]=0 # Sustituye los NA con cero para el cálculo de los coeficientes de correlación más adelante 
 ```
 
 En tanto, la matriz que caracteriza los patrones de ventas, $Y$ se construye con:
@@ -83,153 +82,11 @@ En tanto, la matriz que caracteriza los patrones de ventas, $Y$ se construye con
 ```{r}
 u<-mip_rama$di_tot #Almacena el renglón de ventas totales, demanda intermedia
 Y<-mip_rama %>% 
-  mutate_at(names(mip_rama)[4:ncol(mip_rama)],funs((./u))) %>% #Lleva a cabo la división requerida desde la columna 4 hasta el final, es decir, divide cada elemento de todas las filas entre el vector u 
-  dplyr::select(-upipb,-di_tot,-"8141") %>% # Elimina las columnas de las variables indicadas
-  filter(cve_rama!='uetoni',cve_rama!="8141")
+  mutate_at(names(mip_rama)[4:ncol(mip_rama)],funs((./u))) %>% # Construye los coeficientes de ventas, es decir, divide cada elemento de todas las filas entre el vector de ventas totales, u. 
+  dplyr::select(-upipb,-di_tot,-"8141") %>% # Elimina las variables indicadas
+  filter(cve_rama!='uetoni',cve_rama!="8141")#Elimina las columnas indicadas
 
 Y[is.na(Y)]=0 # Sustituir los NA con cero
-```
-
-Una vez que ya se han calculado las dos matrices que describen los patrones de compras y ventas, el siguiente paso es llevar a cabo el análisis de correlación. No obstante, antes de ello, se presenta el resultado de las matrices para el caso de las 10 ramas de actividad más importantes en términos de su participación porcentual en el usos de la economía total de origen nacional e importado (`uetoni`). Dichas ramas son: 
-  
-* 4311	Comercio al por mayor de abarrotes y alimentos	(7.9%)  
-* 3241	Fabricación de productos derivados del petróleo y del carbón	(7.8%)  
-* 3363	Fabricación de partes para vehículos automotores	(4.6%)  
-* 2111	Extracción de petróleo y gas	(4.1%)
-* 5613	Servicios de empleo	(3.9%)
-* 3251	Fabricación de productos químicos básicos	(3.8%)  
-* 3344	Fabricación de componentes electrónicos	(2.9%)  
-* 2211	Generación, transmisión y distribución de energía eléctrica	(2.4%)
-* 5311	Alquiler sin intermediación de bienes raíces	(2.2%)
-* 3261	Fabricación de productos de plástico	(2.0%)
-
-## Análisis estructura compras {.tabset}
-
-### 4311
-
-```{r}
-grafica_barras(X,sec_1111)
-```
-
-### 3241
-
-
-```{r}
-grafica_barras(X,sec_3241)
-```
-
-### 3363
-
-
-```{r}
-grafica_barras(X,sec_3363)
-```
-
-### 2111
-
-
-```{r}
-grafica_barras(X,sec_2111)
-```
-
-### 5613
-
-```{r}
-grafica_barras(X,sec_5613)
-```
-
-### 3251
-
-```{r}
-grafica_barras(X,sec_3251)
-```
-
-### 3344
-
-```{r}
-grafica_barras(X,sec_3344)
-```
-
-### 2211
-
-```{r}
-grafica_barras(X,sec_2211)
-```
-
-### 5311
-
-```{r}
-grafica_barras(X,sec_5311)
-```
-
-### 3261
-
-```{r}
-grafica_barras(X,sec_3261)
-```
-
-## Análisis estructura ventas {.tabset}
-
-### 4311
-
-
-```{r}
-grafica_barras(Y,sec_4311)
-```
-
-### 3241
-
-```{r}
-grafica_barras(Y,sec_3241)
-```
-
-### 3363
-
-
-```{r}
-grafica_barras(Y,sec_3363)
-```
-
-### 2111
-
-```{r}
-grafica_barras(Y,sec_2111)
-```
-
-### 5613
-
-```{r}
-grafica_barras(Y,sec_5613)
-```
-
-### 3251
-
-```{r}
-grafica_barras(Y,sec_3251)
-```
-
-### 3344
-
-```{r}
-grafica_barras(Y,sec_3344)
-```
-
-### 2211
-
-```{r}
-grafica_barras(Y,sec_2211)
-```
-
-### 5311
-
-```{r}
-grafica_barras(Y,sec_5311)
-```
-
-### 3261
-
-```{r}
-grafica_barras(Y,sec_3261)
 ```
 
 Ahora bien, con las matrices $X$ y $Y$ se lleva a cabo el análisis de correlación, del que se construyen cuatro matrices $A=r(x_l\cdot x_m)$, $B=r(y_l\cdot y_m)$, $C=r(x_l\cdot y_m)$ y $D=r(y_l\cdot x_m)$, mismas que se muestran a continuación con un mapa de calor.
@@ -238,6 +95,7 @@ Ahora bien, con las matrices $X$ y $Y$ se lleva a cabo el análisis de correlaci
 
 #### A
 
+Matriz de correlación de $X$ con respecto a $X$, es decir, $r(x_l \cdot x_m)$:
 ```{r}
 XX<-cor(X[,c(-1,-2)])
 corrplot(XX, method = 'color', type='lower', tl.cex = 0.5)
@@ -245,6 +103,7 @@ corrplot(XX, method = 'color', type='lower', tl.cex = 0.5)
 
 ### B
 
+Matriz de correlación de $Y$ con respecto a $Y$, es decir, $r(y_l \cdot y_m)$:
 ```{r}
 YY<-cor(Y[,c(-1,-2)])
 corrplot(YY, method = 'color', type='lower', tl.cex = 0.5)
@@ -252,12 +111,15 @@ corrplot(YY, method = 'color', type='lower', tl.cex = 0.5)
 
 ### C
 
+Matriz de correlación de $X$ con respecto a $Y$, es decir, $r(x_l \cdot y_m)$:
 ```{r}
 XY<-cor(X[,c(-1,-2)],Y[,c(-1,-2)])
 corrplot(XY, method = 'color', type='lower', tl.cex = 0.5)
 ```
 
 ### D
+
+Matriz de correlación de $Y$ con respecto a $X$, es decir, $r(y_l \cdot x_m)$:
 ```{r}
 YX<-cor(Y[,c(-1,-2)],X[,c(-1,-2)])
 corrplot(YX, method = 'color', type='lower', tl.cex = 0.5)
@@ -265,7 +127,7 @@ corrplot(YX, method = 'color', type='lower', tl.cex = 0.5)
 
 ## Max
 
-Finalmente, del juego de matrices anterior, se construye una nueva matriz en que cada elemento corresponde al valor máximo correspondiente en las matrices previas. Esta última matriz, con la cual se llevará a cabo el análisis por componentes principales, se muestra también en un mapa de calor.
+Finalmente, del juego de matrices de correlación anterior, se construye una nueva matriz, $M$ llamada aquí `max_rama`, en que cada elemento corresponde al valor máximo correspondiente en las matrices previas. Esta última matriz, con la cual se llevará a cabo el análisis por componentes principales, se muestra también en un mapa de calor.
 
 ```{r}
 Q1<-ifelse(XX>YY,XX,YY)
@@ -274,7 +136,6 @@ Q3<-ifelse(Q2>YX,Q2,YX)
 max_rama<-Q3
 corrplot(max_rama, method = 'color', type='lower', tl.cex = 0.5)
 ```
-
 
 ## Análisis por componentes principales
 
@@ -285,13 +146,13 @@ ii) Rotación de los componentes por *varimax*
 iii) Delimitación del número de agrupamientos o cadenas según el número de componentes principales elegidos.  
 iv) Selección de las actividades que integran cada cadena con arreglo a los valores absolutos de las cargas.  
 
-En R, el análisis por componentes principales se desarrolla con la función `prcomp()`. La matriz que será sometida a PCA está integrada por coeficientes de correlación. Se procede como:
+En R, el análisis por componentes principales se desarrolla con la función `prcomp()`. La matriz `max_rama` o $M$ será sometida a PCA está integrada por coeficientes de correlación más altos previamente identificados. Se procede como:
 
 ```{r}
 PCAramaCS <- prcomp(max_rama, center = T, scale. = T)
 ```
 
-El objeto que acaba de ser creado es de tipo `prcomp` y está integrado por los siguientes elementos: `sdev`, `rotation`, `center`, `scale`, `x`. `center` y `scale` corresponden a los valores centrados y escalados, respectivamente, de la variable original. En tanto, el resto:
+En el segmento de código anterior, se ha solicitado que los valores de la matriz sean centrados y escalados. El objeto que acaba de ser creado es de tipo `prcomp` y está integrado por los siguientes elementos: `sdev`, `rotation`, `center`, `scale`, `x`. Además, `center` y `scale` corresponden a los valores centrados y escalados, respectivamente, de la variable original. En tanto, el resto de los elementos:
 
 i) `x`: contiene los componentes principales (las combinaciones lineales de las variables). Los valores de este elemento nos permitirán hacer una gráfica bidimencional (bi-plot) para tener una representación de todas las variables pero "sintetizadas" o "reducida en sus dimensiones".  
 ii) `sdev`: corresponde a la desviación estándar de los componentes calculados. Sirve, cuando la elevamos al cuadrado, para conocer qué porcentaje de la variación de los datos originales es captada por cada componente.  
@@ -300,15 +161,16 @@ iii) `rotation`: almacena las cargas (*loading scores*). Hay una carga para cada
 Uno de los objetivos pues de la aplicación del PCA es la reducción de dimensiones: sintetizar la riqueza informativa de la base de datos (261 variables, es decir, interrelaciones entre sectores por sus patrones de compras y ventas) reducidos a determinado número de componentes. Una representación bidimiencional (con sólo dos variables, que explican a penas 40% de la variabilidad de la información) de nuestra base de datos original se hace con el bi-plot:
 
 ```{r}
-comp1<-as.data.frame(PCAramaCS[["x"]])
-ramas <- row.names(PCAramaCS[["x"]])
-comp1 <- comp1 %>% add_column(ramas)
+comp1<-as.data.frame(PCAramaCS[["x"]]) #Extrae el primer componente que está almacenado en el objeto `x`
+ramas <- row.names(PCAramaCS[["x"]]) #Extrae el nombre de las filas. 
+comp1 <- comp1 %>% add_column(ramas) #Une los dos objetos previamente creados.
 
+# Gráfico bi-plot
 ggplot(comp1)+
   geom_text(aes(x=PC1,y=PC2),label=ramas)
 ```
 
-Los sectores más cercanos son sectores más parecidos entre sí y aparecen más cerca, aunque sólo captando 40% de la variabilidad de la información original. Como se dijo, `sdev` sirve como criterio para la elección del número de componentes que mejor describe la información, ya sea a partir de la magnitud del eigenvalor (la desviación estándar elevada al cuadrado) cuyas componentes serán seleccionadas para la reducción de dimensiones si dicho valor es mayor a la unidad. Esto lo podemos observar a partir de gráfica de sedimentación, de la que hay dos versiones: i) absoluta: graficar el eigenvalor (la desviación estándar elevada al cuadrado) ii) relativa: graficar la proporción de la varianza explicada.
+Los sectores más cercanos son sectores más parecidos entre sí y aparecen más cerca, aquí representados con sus etiquetas de actividad, aunque sólo captando 40% de la variabilidad de la información original. Como se dijo, `sdev` sirve como criterio para la elección del número de componentes que mejor describe la información, ya sea a partir de la magnitud del eigenvalor (la desviación estándar elevada al cuadrado) cuyas componentes serán seleccionadas para la reducción de dimensiones si dicho valor es mayor a la unidad. Esto lo podemos observar a partir del gráfico de sedimentación, de la que hay dos versiones: i) absoluta: graficar el eigenvalor (la desviación estándar elevada al cuadrado) ii) relativa: graficar la proporción de la varianza explicada.
 
 
 ```{r}
@@ -326,7 +188,7 @@ plot(pca.var.per, main='Gráfico de sedimentación',
      type='b')
 ```
 
-En el caso de lo que buscamos aquí, es decir, la identificación de determinado número de actividades que entre sí integran una cadena de valor, la decisión del número de componentes, es decir, del número de cadenas productivas, es hecha con arreglo a los siguientes criterios (Feser y Bergman, 2000):  
+En el caso de lo que buscamos aquí, es decir, la identificación de determinado número de actividades que entre sí integran una cadena productiva, la decisión del número de componentes, es decir, del número de cadenas productivas, es hecha con arreglo a los siguientes criterios (Feser y Bergman, 2000):  
   
 i) la proporción relativa de varianza que cada componente explica,  
 ii) el tamaño de los eigenvalores asociados,  
@@ -340,31 +202,35 @@ summary(PCAramaCS)
 
 De donde es posible observar qué número de componentes explican determinado porcentaje de varianza, de forma semejante al gráfico de sedimentación. Antes de la rotación, el número de componentes (agrupamientos) que se considera adecuado es 25, los que explican 92% de la varianza y en todos ellos el tamaño del eigenvalor es mayor a 1.
 
-Según lo indicado por Feser y Bergman (2000), la selección de las actividades que integran cada cadena productiva se hace observando las cargas dentro de cada agrupamiento, es decir, los valores absolutos del elemento `rotation`. De nuevo, Feser y Bergman (2000): "el conjunto generado de cargas (*loadings*) provee una medida de la fuerza relativa de los vínculos entre una industria dada y el factor derivado, en donde las industrias con las cargas más altas de un factor dado son tratadas como miembros de una cadena productiva" (p. 4). En la práctica es común en el análisis factorial considerar como significativas o dignas de interpretación sólo aquellas cargas que son más grandes que 0.5 (en términos absolutos). Para la selección de las actividades que integrarán cada cadena productiva, los autores que seguimos buscan hacer un balance de los siguientes objetivos (p. 4): 
+Según lo indicado por Feser y Bergman (2000), la selección de las actividades que integran cada cadena productiva se hace observando las cargas dentro de cada agrupamiento, es decir, los valores absolutos del elemento `rotation`. De nuevo, Feser y Bergman (2000) dicen que "el conjunto generado de cargas (*loadings*) provee una medida de la fuerza relativa de los vínculos entre una industria dada y el factor derivado, en donde las industrias con las cargas más altas de un factor dado son tratadas como miembros de una cadena productiva" (p. 4). En la práctica es común en el análisis factorial considerar como significativas o dignas de interpretación sólo aquellas cargas que son más grandes que 0.5 (en términos absolutos). Para la selección de las actividades que integrarán cada cadena productiva, los autores que seguimos buscan hacer un balance de los siguientes objetivos (p. 4): 
 
 1. Identificar, mediante la magnitud de las cargas, los vínculos más estrechos de cada cluster, con independencia de si dicho sector está también vinculado estrechamente a otros cluster.
 2. Identificar, en la medida de lo posible, un conjunto de clusters mutuamente excluyentes, de modo que cada sector esté asignado a un solo cluster.
 3. Investigar los vínculos tanto entre clusteres como al interior de cada cluster.
 
-Así, respecto al objetivo 1, la elección de las actividades que integra cada cadena productiva es hecha a partir de la magnitud de la carga y los autores distinguen entre diferentes tipos de actividades: industrias primarias y secundarias. Las primarias son aquellas que, para una cadena, tienen un valor de la carga igual o mayor a 0.6, en tanto, una actividad secundaria es aquella que tiene una carga entre 0.35 y 0.6.
+Así, respecto al objetivo 1, la elección de las actividades que integra cada cadena productiva es hecha a partir de la magnitud de la carga y los autores distinguen entre diferentes tipos de actividades: industrias primarias y secundarias. Las primarias son aquellas que, para una cadena, tienen un valor de la carga mayor o igual a 0.6, en tanto, una actividad secundaria es aquella que tiene una carga entre 0.35 y 0.6.
 
-No obstante, eso hay que hacerlo después de la rotación varimax. La librería `psych` permite seleccionar el método de rotación desde el cálculo de los componentes, a través de la función `principal()`. El siguiente segmento de código lleva a cabo el cálculo de los componentes principales rotados con varimax, donde se ha especificado que se desean 25 componentes, luego guarda las cargas en un `dataframe` para su análisis.
+No obstante, eso hay que hacerlo después de la rotación *varimax*. La librería `psych` permite seleccionar el método de rotación desde el cálculo de los componentes, a través de la función `principal()`. El siguiente segmento de código lleva a cabo el cálculo de los componentes principales rotados con varimax, donde se ha especificado que se desean 25 componentes, luego guarda las cargas en un `dataframe` para su análisis.
 
-```{r}
-PCAramaVM <- principal(r=max_rama,nfactors = 25,rotate = "varimax")
-cargasPCA <-cbind(nom_rama=X$nom_rama,data.frame(rama=row.names(max_rama),unclass(PCAramaVM$loadings)))
+```{r message=FALSE, warning=FALSE, include=FALSE}
+PCAramaVM <- principal(r=max_rama,nfactors = 25,rotate = "varimax") # Cálculo de PCA con el método varimax
+cargasPCA <-cbind(nom_rama=X$nom_rama,data.frame(rama=row.names(max_rama),unclass(PCAramaVM$loadings))) #Almacena las cargas en un nuevo objeto
 ```
 
-De los 25 componentes (cadenas productivas) obtenidas, 9 de ellas corresponden a actividades industriales, por ello, se seleccionan las de interés a través del siguiente segmento de código: 
+La selección de las cadenas productivas industriales fue hecha a partir de la observación de las actividades económicas listadas en cada uno de los 25 componentes, ordenando las cargas de mayor a menor, buscando dónde los códigos de "industria" estaban más presentes, es decir, de las actividades 21 (minería), 22 (electricidad, agua y gas), 23 (costrucción) y 31-33 (manufactura). De los 25 componentes (cadenas productivas) obtenidas, 9 de ellas corresponden a actividades industriales: los componentes 3, 6, 8, 10, 12, 13, 15, 17 y 20.
+
+El siguiente segmento de código selecciona dichos componentes y los almacena en el objeto `clusters`:
 
 ```{r}
-clusters<-c('RC3','RC6','RC8','RC10','RC12','RC13','RC15','RC17','RC20')
+clusters<-c('RC3','RC6','RC8','RC10','RC12','RC13','RC15','RC17','RC20') # Selección de los componentes asociados a la industria
 
-ramas_ci<-cargasPCA %>%
+ramas_ci<-cargasPCA %>% #Ordena los componentes
   dplyr::select(nom_rama,rama,RC3,RC6,RC8,RC10,RC12,RC13,RC15,RC17,RC20 )
 ```
 
-Luego, esta información se apila para identificar más fácilmente las cargas y discriminar entre actividades que aparecen en varias cadenas simultáneamente:
+Una vez identificados los componentes que corresponden a cadenas industriales, hay que discriminar entre aquellas actividades que efectivamente integran dicha cadena con arreglo a los valores de sus cargas. Recordemos: actividades con cargas mayores a 0.35 formarán parte de la cadena productiva, además, una actividad deberá sólo pertenecer a una cadena, por lo que permanecerá en aquella en que tenga la carga más alta y será excluida de las otras en que aparezca.
+
+Para facilitar esta selección, la información se apila con el siguiente segmento de código:
 
 ```{r}
 nc<-ncol(ramas_ci)-2
@@ -379,15 +245,16 @@ for (i in 1:nc){
     }
 ```
 
-Las actividades que aparecen en más de una cadena aparecen con una cuenta mayor que uno en la siguiente tabla:
+Una vez que la información de las 9 cadenas industriales ha sido apilada, hay que identificar las actividades que aparecen en más de una cadena. Eso se hace con:
 
 ```{r}
 Cuenta<- ramas_ci_row %>% 
   count(rama) %>%
   arrange(x=desc(n))
-Cuenta
+Cuenta %>% filter(n>1)
 ```
-Dichas actividades duplicadas se asignan a la cadena donde tienen la mayor carga:
+
+Entonces, como se dijo, la actividad será asignada a la cadena donde tenga la mayor carga. Lo que se logra con:
 
 ```{r}
 ramas_ci_final<-ramas_ci_row %>%
@@ -401,17 +268,21 @@ Ahora, sólo queda una actividad por cadena, como se indica en los criterios dad
 Cuenta2<- ramas_ci_final %>% 
   count(rama) %>%
   arrange(desc(n))
+Cuenta2
 ```
 
 El conjunto de ramas vinculadas a cada una de las nueve cadenas obtenidas se muestra en el siguiente cuadro:
 
 ```{r}
-Cuadro_cruster<-ramas_ci_final  %>%
+Cuadro_cluster<-ramas_ci_final  %>%
   dplyr::select(cluster,rama)%>%
   group_by(cluster) %>%
   summarise(ramas = paste(rama, collapse = ", "))
-Cuadro_cruster %>%
+Cuadro_cluster %>%
     arrange(factor(cluster, levels = clusters))%>%
   kbl(caption = "Ramas más fuertemente vinculadas") %>%
   kable_styling()
 ```
+
+
+Ahora bien, una vez identificadas las actividades pertenecientes a cada cadena, se procede a su espacialización a través del cálculo de indicadores locales de asociación espacial, como se muestra en la siguiente sección.
